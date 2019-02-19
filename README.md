@@ -14,6 +14,12 @@ Please refer to this instruction for installation and testing of the project to 
 1. git clone https://github.com/nhatnguyen26/zooProject.git
 2. install postgresql:
     - For mac: use home brew: `brew update` -> `brew install postgresql@10`
+    - Follow step to initdb:
+        - createdb zoodb
+        - psql zoodb
+        - create user zoodb;
+        - alter user zoodb with encrypted password 'ZooDBPassword';
+        - grant all privileges on database zoodb to zoodb;
 3. Initial test to make sure set up work: 
     - Run `com.zoo.bookingService.application.BookingServiceApplication`
     - In Postman: GET http://localhost:8080/bookingSevice/v1/bookings/version -> if get "0.0.1" mean server start successfully

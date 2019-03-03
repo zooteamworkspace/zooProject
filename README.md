@@ -16,7 +16,8 @@ Please refer to this instruction for installation and testing of the project to 
     - For mac: use home brew: `brew update` -> `brew install postgresql@10`
 3. Initial test to make sure set up work: 
     - Run `com.zoo.bookingService.application.BookingServiceApplication`
-    - In Postman: GET http://localhost:8080/bookingSevice/v1/bookings/version -> if get "0.0.1" mean server start successfully
+    - In Postman: GET http://localhost:8080/bookingService/v1/bookings/version -> if get "0.0.1" mean server start successfully
+4. Testing using Swagger: http://localhost:8080/swagger/index.html
 
 ## Working convention:
 

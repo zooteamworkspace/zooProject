@@ -1,7 +1,8 @@
 package com.zoo.bookingService.service;
 
-import org.springframework.stereotype.Service;
+import com.zoo.bookingService.response.FieldBooking;
 
-@Service
-public class BookingService {
+public interface BookingService {
+
+    FieldBooking findBookingById(long bookingId);
 }

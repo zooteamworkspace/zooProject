@@ -34,7 +34,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
         this.register(SwaggerSerializers.class);
 
         BeanConfig config = new BeanConfig();
-        config.setTitle("Booking Service for Zoo project");
+        config.setTitle("Backend service for zoo application");
         config.setVersion("v1");
         config.setSchemes(new String[]{"http"});
         config.setBasePath("/zooApplication/");

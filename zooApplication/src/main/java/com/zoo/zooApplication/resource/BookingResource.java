@@ -44,7 +44,7 @@ public class BookingResource {
         return bookingService.findBookingById(NumberUtils.toLong(bookingId));
     }
 
-    @ApiOperation(value = "find the field bookings by id")
+    @ApiOperation(value = "create a booking entries")
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Booking created", response = FieldBooking.class)})
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

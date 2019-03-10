@@ -7,7 +7,7 @@ CREATE TABLE FIELD_BOOKINGS (
     field_id INT NOT NULL,
     time_in  BIGINT NOT NULL,
     time_out BIGINT NOT NULL,
-    status  SMALLINT,
+    status  VARCHAR(20),
     booker_user_id  INT,
     booker_name  VARCHAR(64),
     booker_email VARCHAR(254),
@@ -17,3 +17,6 @@ CREATE TABLE FIELD_BOOKINGS (
     created_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL
 );
+
+GRANT ALL PRIVILEGES ON TABLE FIELD_BOOKINGS TO zoodb;
+GRANT ALL PRIVILEGES ON TABLE field_bookings_id_seq TO zoodb;

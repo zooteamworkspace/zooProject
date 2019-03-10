@@ -3,8 +3,10 @@ package com.zoo.zooApplication.resource;
 import com.zoo.zooApplication.request.CreateBookingRequest;
 import com.zoo.zooApplication.response.FieldBooking;
 import com.zoo.zooApplication.service.BookingService;
-import io.swagger.annotations.*;
-import org.apache.commons.lang3.math.NumberUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
@@ -41,7 +43,7 @@ public class BookingResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{bookingId}")
     public FieldBooking findById(@PathParam("bookingId") String bookingId) {
-        return bookingService.findBookingById(NumberUtils.toLong(bookingId));
+        return bookingService.findBookingById(bookingId);
     }
 
     @ApiOperation(value = "create a booking entries")

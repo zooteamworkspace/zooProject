@@ -25,10 +25,13 @@ public class FieldBookingDO {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private Long courtId;
 
-    @Column(nullable = false)
+    @Column
+    private String fieldType;
+
+    @Column
     private Long fieldId;
 
     @Column(nullable = false)

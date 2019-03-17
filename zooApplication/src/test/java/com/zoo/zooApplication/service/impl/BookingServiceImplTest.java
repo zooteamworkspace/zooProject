@@ -72,6 +72,7 @@ public class BookingServiceImplTest {
         when(fieldBookingRepository.save(argumentCaptor.capture())).thenReturn(mockDO);
         FieldBooking mockResponse = mock(FieldBooking.class);
         when(fieldBookingDOToResponseConverter.convert(mockDO)).thenReturn(mockResponse);
+        doNothing().when(bookingRequestValidator).validateCreateBookingRequest(testRequest);
         assertEquals(mockResponse, bookingService.createBooking(testRequest));
     }
 
@@ -104,6 +105,7 @@ public class BookingServiceImplTest {
         CreateBookingRequest testRequest = mock(CreateBookingRequest.class);
         when(testRequest.getPriceAmount()).thenReturn(100000.00);
         FieldBookingDO requestDO = fieldRequestHelper(testRequest);
+        assertEquals("VND", requestDO.getCurrencyId());
         assertEquals(Double.valueOf(100000.00), requestDO.getPriceAmount());
     }
 
@@ -113,6 +115,28 @@ public class BookingServiceImplTest {
         when(testRequest.getFieldId()).thenReturn(123L);
         FieldBookingDO requestDO = fieldRequestHelper(testRequest);
         assertEquals(Long.valueOf(123L), requestDO.getFieldId());
+        // TODO verify courtID and fieldType autoFilled
+    }
+
+    @Test
+    public void testCreateBookingValidRequestVerifyCourtIdAndFieldTypeNoField() {
+        CreateBookingRequest testRequest = mock(CreateBookingRequest.class);
+        when(testRequest.getCourtId()).thenReturn(123L);
+        when(testRequest.getFieldType()).thenReturn("FIELD_5");
+        FieldBookingDO requestDO = fieldRequestHelper(testRequest);
+        assertEquals(Long.valueOf(123L), requestDO.getCourtId());
+        assertEquals("FIELD_5", requestDO.getFieldType());
+    }
+
+    @Test
+    public void testCreateBookingValidRequestVerifyCourtIdAndFieldTypeNoFieldZero() {
+        CreateBookingRequest testRequest = mock(CreateBookingRequest.class);
+        when(testRequest.getFieldId()).thenReturn(0L);
+        when(testRequest.getCourtId()).thenReturn(123L);
+        when(testRequest.getFieldType()).thenReturn("FIELD_5");
+        FieldBookingDO requestDO = fieldRequestHelper(testRequest);
+        assertEquals(Long.valueOf(123L), requestDO.getCourtId());
+        assertEquals("FIELD_5", requestDO.getFieldType());
     }
 
     @Test
@@ -132,6 +156,7 @@ public class BookingServiceImplTest {
         ArgumentCaptor<FieldBookingDO> argumentCaptor = ArgumentCaptor.forClass(FieldBookingDO.class);
         FieldBookingDO mockDO = mock(FieldBookingDO.class);
         when(fieldBookingRepository.save(argumentCaptor.capture())).thenReturn(mockDO);
+        doNothing().when(bookingRequestValidator).validateCreateBookingRequest(testRequest);
         bookingService.createBooking(testRequest);
         return argumentCaptor.getValue();
     }

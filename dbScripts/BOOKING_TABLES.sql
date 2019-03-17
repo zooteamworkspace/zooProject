@@ -3,8 +3,9 @@ DROP TABLE IF EXISTS FIELD_BOOKINGS;
 
 CREATE TABLE FIELD_BOOKINGS (
     id      SERIAL PRIMARY KEY,
-    court_id INT NOT NULL,
-    field_id INT NOT NULL,
+    court_id INT,
+    fieldType VARCHAR(20),
+    field_id INT,
     time_in  BIGINT NOT NULL,
     time_out BIGINT NOT NULL,
     status  VARCHAR(20),

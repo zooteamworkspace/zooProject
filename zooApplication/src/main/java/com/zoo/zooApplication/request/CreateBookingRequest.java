@@ -12,8 +12,14 @@ import javax.persistence.Column;
 @ApiModel(value = "CreateBookingRequest", description = "The request to create a booking")
 public class CreateBookingRequest {
 
-    @ApiModelProperty(value = "The unique identifier of the field associate with the booking", required = true)
+    @ApiModelProperty(value = "The unique identifier of the field associate with the booking, when fieldId is provided, courtId and fieldType will be ignored")
     private Long fieldId;
+
+    @ApiModelProperty(value = "The unique identifier of the court associate with the booking, when courtId is provided a fieldType is also required")
+    private Long courtId;
+
+    @ApiModelProperty(value = "The fieldType of the booking, when this field is provided also required with courtId")
+    private String fieldType;
 
     @ApiModelProperty(value = "Time for the booking to start in format YYYY-MM-ddTHH:mm:ssZ (ISO-8601)", required = true)
     private String timeIn;

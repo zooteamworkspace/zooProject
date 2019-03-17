@@ -46,17 +46,25 @@ public class BookingServiceImpl implements BookingService {
     public FieldBooking createBooking(CreateBookingRequest bookingRequest) {
         bookingRequestValidator.validateCreateBookingRequest(bookingRequest);
         ZonedDateTime timeIn = DateTimeUtil.parseISO8601Format(bookingRequest.getTimeIn());
-        FieldBookingDO fieldBookingDO = FieldBookingDO.builder()
+        FieldBookingDO.FieldBookingDOBuilder doBuilder = FieldBookingDO.builder()
                 .fieldId(bookingRequest.getFieldId())
-                .courtId(123L) // FIXME: getCourt from Field, Stubbing atm
                 .timeIn(timeIn)
                 .timeOut(timeIn.plusMinutes(bookingRequest.getDuration()))
                 .bookerPhone(bookingRequest.getBookerPhone())
                 .bookerEmail(bookingRequest.getBookerEmail())
                 .bookerName(bookingRequest.getBookerName())
                 .priceAmount(bookingRequest.getPriceAmount())
-                .build();
-        FieldBookingDO result = fieldBookingRepository.save(fieldBookingDO);
+                .currencyId("VND"); // NOTE; hard-code to VND
+
+        if (bookingRequest.getFieldId() != null && bookingRequest.getFieldId() > 0) {
+            // TODO: find courtId and fieldType from fieldID and ignore the extra data
+            doBuilder.fieldId(bookingRequest.getFieldId());
+        } else {
+            doBuilder.courtId(bookingRequest.getCourtId());
+            doBuilder.fieldType(bookingRequest.getFieldType());
+        }
+
+        FieldBookingDO result = fieldBookingRepository.save(doBuilder.build());
         return fieldBookingDOToResponseConverter.convert(result);
     }
 }

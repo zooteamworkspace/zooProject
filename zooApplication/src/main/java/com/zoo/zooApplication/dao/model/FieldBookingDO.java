@@ -1,45 +1,49 @@
 package com.zoo.zooApplication.dao.model;
 
 import com.zoo.zooApplication.util.DOTimestampConverter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "field_bookings")
 @Getter
+@Builder
+@AllArgsConstructor // require for @Builder to work correctly
+@NoArgsConstructor // required for hibernate mapping
 public class FieldBookingDO {
 
     @Id
-    @GeneratedValue
-    @NotNull
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    @NotNull
     private Long courtId;
 
     @Column
-    @NotNull
+    private String fieldType;
+
+    @Column
     private Long fieldId;
 
-    @Column
+    @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
-    @NotNull
-    private LocalDateTime timeIn;
+    private ZonedDateTime timeIn;
 
-    @Column
+    @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
-    @NotNull
-    private LocalDateTime timeOut;
+    private ZonedDateTime timeOut;
 
-    @Column
-    @NotNull
-    private Integer status;
+    @Column(nullable = false)
+    private String status;
 
     @Column
     private Long bookerUserId;
@@ -59,15 +63,13 @@ public class FieldBookingDO {
     @Column
     private String currencyId;
 
-    @Column
+    @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
     @CreationTimestamp
-    @NotNull
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
-    @Column
+    @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
     @UpdateTimestamp
-    @NotNull
-    private LocalDateTime updatedAt;
+    private ZonedDateTime updatedAt;
 }

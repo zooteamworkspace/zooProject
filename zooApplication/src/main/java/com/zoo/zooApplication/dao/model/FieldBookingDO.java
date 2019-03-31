@@ -70,4 +70,8 @@ public class FieldBookingDO {
     @UpdateTimestamp
     @NotNull
     private LocalDateTime updatedAt;
+
+    public void setFieldId(Long fieldId) {
+        this.fieldId = fieldId;
+    }
 }

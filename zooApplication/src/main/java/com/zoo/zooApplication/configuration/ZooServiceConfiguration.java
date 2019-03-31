@@ -1,6 +1,11 @@
 package com.zoo.zooApplication.configuration;
 
+<<<<<<< HEAD:zooApplication/src/main/java/com/zoo/zooApplication/configuration/ZooServiceConfiguration.java
 import com.zoo.zooApplication.resource.BookingResource;
+=======
+import com.zoo.bookingService.resource.BookingResource;
+import com.zoo.bookingService.resource.BookingServiceResource;
+>>>>>>> commit to rebase with master:bookingService/src/main/java/com/zoo/bookingService/configuration/BookingServiceConfiguration.java
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -22,6 +27,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
 
     public ZooServiceConfiguration() {
         register(BookingResource.class);
+        register(BookingServiceResource.class);
     }
 
     @PostConstruct

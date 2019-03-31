@@ -22,6 +22,7 @@ import java.util.List;
 @Api(value = "Operations relating to field bookings and reservations")
 public class BookingServiceResource {
 
+
     @Inject
     private BookingService bookingService;
 
@@ -29,7 +30,9 @@ public class BookingServiceResource {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Resource found")})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+
     @Path("fieldId={fieldId}&limit={limit}&offset={offset}")
+
     public List<FieldBooking> findByFieldId(@PathParam("fieldId") String fieldId,
                                             @PathParam("limit") int lim,
                                             @PathParam("offset") int offset) {

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -42,4 +43,6 @@ public class BookingResource {
     public FieldBooking findById(@PathParam("bookingId") String bookingId) {
         return bookingService.findBookingById(NumberUtils.toLong(bookingId));
     }
+
 }
+

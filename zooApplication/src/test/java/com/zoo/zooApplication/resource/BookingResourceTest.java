@@ -31,7 +31,7 @@ public class BookingResourceTest {
     public void testFindBookingByIdFound() {
         BookingResource bookingResource = new BookingResource(mockBookingService);
         FieldBooking mockResponse = mock(FieldBooking.class);
-        when(mockBookingService.findBookingById(123l)).thenReturn(mockResponse);
+        when(mockBookingService.findBookingById("123")).thenReturn(mockResponse);
         assertEquals(mockResponse, bookingResource.findById("123"));
     }
 

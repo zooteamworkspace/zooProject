@@ -5,7 +5,7 @@ import com.zoo.zooApplication.response.FieldBooking;
 
 public interface BookingService {
 
-    FieldBooking findBookingById(long bookingId);
+    FieldBooking findBookingById(String bookingId);
 
     FieldBooking createBooking(CreateBookingRequest bookingRequest);
 }

@@ -2,24 +2,21 @@ package com.zoo.zooApplication.util;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.Objects;
 
 @Converter
-public class DOTimestampConverter implements AttributeConverter<LocalDateTime, Long> {
+public class DOTimestampConverter implements AttributeConverter<ZonedDateTime, Long> {
 
     @Override
-    public Long convertToDatabaseColumn(LocalDateTime localDateTime) {
+    public Long convertToDatabaseColumn(ZonedDateTime localDateTime) {
         Objects.requireNonNull(localDateTime);
-        return localDateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
+        return localDateTime.toInstant().toEpochMilli();
     }
 
     @Override
-    public LocalDateTime convertToEntityAttribute(Long milliseconds) {
+    public ZonedDateTime convertToEntityAttribute(Long milliseconds) {
         Objects.requireNonNull(milliseconds);
-        return Instant.ofEpochMilli(milliseconds).atZone(ZoneId.of("UTC")).toLocalDateTime();
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneOffset.UTC.normalized());
     }
 }

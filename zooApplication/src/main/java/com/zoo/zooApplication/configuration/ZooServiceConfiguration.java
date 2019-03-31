@@ -21,7 +21,7 @@ import javax.ws.rs.ApplicationPath;
 @Configuration
 @EnableJpaRepositories(basePackages = {"com.zoo.zooApplication.dao.repository"})
 @EntityScan(basePackages = {"com.zoo.zooApplication.dao.model"})
-@ComponentScan(basePackages = {"com.zoo.zooApplication.service", "com.zoo.zooApplication.converter", "com.zoo.zooApplication.util"})
+@ComponentScan(basePackages = {"com.zoo.zooApplication"})
 @ApplicationPath("/zooApplication")
 public class ZooServiceConfiguration extends ResourceConfig {
 

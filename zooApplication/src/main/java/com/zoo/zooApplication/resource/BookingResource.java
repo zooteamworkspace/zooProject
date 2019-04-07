@@ -7,6 +7,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
@@ -16,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.List;
 
 @Path("/v1/bookings")
 @Api(value = "Operations relating to field bookings and reservations")
@@ -62,5 +66,18 @@ public class BookingResource {
                 .created(locationURI)
                 .entity(bookingCreated)
                 .build();
+    }
+
+    @ApiOperation(value = "find the field bookings by field id", response = FieldBooking.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Resource found")})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/search")
+
+    public List<FieldBooking> findByFieldId(@QueryParam("fieldId") String fieldId,
+                                            @QueryParam("limit") int limit,
+                                            @QueryParam("offset") int offset) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        return bookingService.findAllBookingByFieldId(NumberUtils.toLong(fieldId), pageable);
     }
 }

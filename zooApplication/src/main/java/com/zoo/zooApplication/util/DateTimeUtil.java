@@ -7,8 +7,6 @@ import java.time.ZonedDateTime;
 
 public class DateTimeUtil {
 
-
-
     public static ZonedDateTime parseISO8601Format(String stringISO8601) {
         if (stringISO8601 == null) {
             return null;

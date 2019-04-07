@@ -5,8 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
-import javax.persistence.Column;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @ApiModel(value = "CreateBookingRequest", description = "The request to create a booking")

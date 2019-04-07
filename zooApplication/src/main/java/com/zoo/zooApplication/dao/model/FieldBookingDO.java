@@ -9,8 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -22,7 +20,7 @@ import java.time.ZonedDateTime;
 public class FieldBookingDO {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
@@ -71,14 +69,5 @@ public class FieldBookingDO {
     @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
     @UpdateTimestamp
-<<<<<<< HEAD
-    @NotNull
-    private LocalDateTime updatedAt;
-
-    public void setFieldId(Long fieldId) {
-        this.fieldId = fieldId;
-    }
-=======
     private ZonedDateTime updatedAt;
->>>>>>> master
 }

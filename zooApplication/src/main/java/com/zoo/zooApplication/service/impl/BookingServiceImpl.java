@@ -1,6 +1,5 @@
 package com.zoo.zooApplication.service.impl;
 
-<<<<<<< HEAD:zooApplication/src/main/java/com/zoo/zooApplication/service/impl/BookingServiceImpl.java
 import com.zoo.zooApplication.converter.FieldBookingDOToResponseConverter;
 import com.zoo.zooApplication.dao.model.FieldBookingDO;
 import com.zoo.zooApplication.dao.repository.FieldBookingRepository;
@@ -8,31 +7,17 @@ import com.zoo.zooApplication.request.CreateBookingRequest;
 import com.zoo.zooApplication.request.validator.BookingRequestValidator;
 import com.zoo.zooApplication.response.FieldBooking;
 import com.zoo.zooApplication.service.BookingService;
-<<<<<<< HEAD
-=======
-import com.zoo.bookingService.converter.FieldBookingDOToResponseConverter;
-import com.zoo.bookingService.dao.model.FieldBookingDO;
-import com.zoo.bookingService.dao.repository.FieldBookingRepository;
-import com.zoo.bookingService.response.FieldBooking;
-import com.zoo.bookingService.service.BookingService;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
->>>>>>> find booking by field ID with pagination:bookingService/src/main/java/com/zoo/bookingService/service/impl/BookingServiceImpl.java
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
-=======
 import com.zoo.zooApplication.util.DateTimeUtil;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
->>>>>>> master
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -63,24 +48,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-<<<<<<< HEAD:zooApplication/src/main/java/com/zoo/zooApplication/service/impl/BookingServiceImpl.java
     public FieldBooking createBooking(CreateBookingRequest bookingRequest) {
-<<<<<<< HEAD
-        return FieldBooking.builder().id(123).build();
-=======
-    public List<FieldBooking> findAllBookingByFieldId(long fieldId, Pageable pageable){
-        FieldBookingDO fieldBookingDO = new FieldBookingDO();
-        fieldBookingDO.setFieldId(fieldId);
-        Example<FieldBookingDO> exampleBookingDO = Example.of(fieldBookingDO);
-        Page<FieldBookingDO> listFieldBookingDO = fieldBookingRepository.findAll(exampleBookingDO,pageable);
-        List<FieldBooking> listFieldBooking = new ArrayList<>();
-        for (FieldBookingDO fieldbookingDO:listFieldBookingDO){
-            FieldBooking fieldBooking = fieldBookingDOToResponseConverter.convert(fieldbookingDO);
-            listFieldBooking.add(fieldBooking);
-        }
-        return listFieldBooking;
->>>>>>> find booking by field ID with pagination:bookingService/src/main/java/com/zoo/bookingService/service/impl/BookingServiceImpl.java
-=======
         bookingRequestValidator.validateCreateBookingRequest(bookingRequest);
         ZonedDateTime timeIn = DateTimeUtil.parseISO8601Format(bookingRequest.getTimeIn());
         FieldBookingDO.FieldBookingDOBuilder doBuilder = FieldBookingDO.builder()
@@ -103,6 +71,22 @@ public class BookingServiceImpl implements BookingService {
 
         FieldBookingDO result = fieldBookingRepository.save(doBuilder.build());
         return fieldBookingDOToResponseConverter.convert(result);
->>>>>>> master
     }
+
+    @Override
+    public List<FieldBooking> findAllBookingByFieldId(long fieldId, Pageable pageable) {
+        FieldBookingDO fieldBookingDO = FieldBookingDO
+                .builder()
+                .fieldId(fieldId)
+                .build();
+        Example<FieldBookingDO> exampleBookingDO = Example.of(fieldBookingDO);
+        Page<FieldBookingDO> listFieldBookingDO = fieldBookingRepository.findAll(exampleBookingDO, pageable);
+        List<FieldBooking> listFieldBooking = new ArrayList<>();
+        for (FieldBookingDO fieldbookingDO : listFieldBookingDO) {
+            FieldBooking fieldBooking = fieldBookingDOToResponseConverter.convert(fieldbookingDO);
+            listFieldBooking.add(fieldBooking);
+        }
+        return listFieldBooking;
+    }
+
 }

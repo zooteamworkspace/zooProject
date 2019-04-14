@@ -35,11 +35,9 @@ public class BookingServiceImpl implements BookingService {
     public FieldBooking findBookingById(String bookingId) {
         bookingRequestValidator.validateBookingId(bookingId);
         Optional<FieldBookingDO> fieldBookingDO = fieldBookingRepository.findById(NumberUtils.toLong(bookingId));
-        FieldBooking fieldBooking = null;
-        if (fieldBookingDO.isPresent()) {
-            fieldBooking = fieldBookingDOToResponseConverter.convert(fieldBookingDO.get());
-        }
-        return fieldBooking;
+        return fieldBookingDO
+                .map(fieldBookingDOToResponseConverter::convert)
+                .orElse(null);
     }
 
     @Override

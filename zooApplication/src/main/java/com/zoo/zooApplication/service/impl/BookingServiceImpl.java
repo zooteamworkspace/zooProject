@@ -16,9 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -81,10 +80,11 @@ public class BookingServiceImpl implements BookingService {
                 .build();
         Example<FieldBookingDO> exampleBookingDO = Example.of(fieldBookingDO);
         Page<FieldBookingDO> listFieldBookingDO = fieldBookingRepository.findAll(exampleBookingDO, pageable);
+        FieldBookingDOToResponseConverter converter = new FieldBookingDOToResponseConverter();
         List<FieldBooking> listFieldBooking = new ArrayList<>();
-        for (FieldBookingDO fieldbookingDO : listFieldBookingDO) {
-            FieldBooking fieldBooking = fieldBookingDOToResponseConverter.convert(fieldbookingDO);
-            listFieldBooking.add(fieldBooking);
+        if (listFieldBookingDO!=null) {
+            listFieldBooking = listFieldBookingDO.stream()
+                    .map(converter::convert).collect(Collectors.toList());
         }
         return listFieldBooking;
     }

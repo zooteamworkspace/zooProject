@@ -77,7 +77,7 @@ public class BookingResource {
     public List<FieldBooking> findByFieldId(@QueryParam("fieldId") String fieldId,
                                             @QueryParam("limit") int limit,
                                             @QueryParam("offset") int offset) {
-        Pageable pageable = PageRequest.of(offset, limit);
-        return bookingService.findAllBookingByFieldId(NumberUtils.toLong(fieldId), pageable);
+        return bookingService.findAllBookingByFieldId(NumberUtils.toLong(fieldId),
+                PageRequest.of(offset, limit));
     }
 }

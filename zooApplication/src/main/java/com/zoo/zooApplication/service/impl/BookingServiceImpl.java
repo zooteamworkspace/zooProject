@@ -4,6 +4,7 @@ import com.zoo.zooApplication.converter.FieldBookingDOToResponseConverter;
 import com.zoo.zooApplication.dao.model.FieldBookingDO;
 import com.zoo.zooApplication.dao.repository.FieldBookingRepository;
 import com.zoo.zooApplication.request.CreateBookingRequest;
+import com.zoo.zooApplication.request.SearchFieldBookingRequest;
 import com.zoo.zooApplication.request.validator.BookingRequestValidator;
 import com.zoo.zooApplication.response.FieldBooking;
 import com.zoo.zooApplication.service.BookingService;
@@ -73,13 +74,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<FieldBooking> findAllBookingByFieldId(long fieldId, Pageable pageable) {
+    public List<FieldBooking> findAllBookingByFieldId(SearchFieldBookingRequest searchRequest) {
         FieldBookingDO fieldBookingDO = FieldBookingDO
                 .builder()
-                .fieldId(fieldId)
+                .fieldId(searchRequest.getFieldId())
                 .build();
         Example<FieldBookingDO> exampleBookingDO = Example.of(fieldBookingDO);
-        Page<FieldBookingDO> listFieldBookingDO = fieldBookingRepository.findAll(exampleBookingDO, pageable);
+        Page<FieldBookingDO> listFieldBookingDO =
+                fieldBookingRepository.findAll(exampleBookingDO, searchRequest.getPageable());
         FieldBookingDOToResponseConverter converter = new FieldBookingDOToResponseConverter();
         List<FieldBooking> listFieldBooking = new ArrayList<>();
         if (listFieldBookingDO!=null) {

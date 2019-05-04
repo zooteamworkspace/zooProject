@@ -1,6 +1,7 @@
 package com.zoo.zooApplication.service;
 
 import com.zoo.zooApplication.request.CreateBookingRequest;
+import com.zoo.zooApplication.request.SearchFieldBookingRequest;
 import com.zoo.zooApplication.response.FieldBooking;
 import org.springframework.data.domain.Pageable;
 
@@ -12,5 +13,5 @@ public interface BookingService {
 
     FieldBooking createBooking(CreateBookingRequest bookingRequest);
 
-    List<FieldBooking> findAllBookingByFieldId(long fieldId, Pageable pageable);
+    List<FieldBooking> findAllBookingByFieldId(SearchFieldBookingRequest searchRequest);
 }

@@ -1,6 +1,7 @@
 package com.zoo.zooApplication.resource;
 
 import com.zoo.zooApplication.request.CreateBookingRequest;
+import com.zoo.zooApplication.request.SearchFieldBookingRequest;
 import com.zoo.zooApplication.response.FieldBooking;
 import com.zoo.zooApplication.service.BookingService;
 import io.swagger.annotations.Api;
@@ -77,7 +78,13 @@ public class BookingResource {
     public List<FieldBooking> findByFieldId(@QueryParam("fieldId") String fieldId,
                                             @QueryParam("limit") int limit,
                                             @QueryParam("offset") int offset) {
-        return bookingService.findAllBookingByFieldId(NumberUtils.toLong(fieldId),
-                PageRequest.of(offset, limit));
+
+        SearchFieldBookingRequest searchRequest =
+                SearchFieldBookingRequest.builder()
+                        .fieldId(fieldId)
+                        .offset(offset)
+                        .limit(limit)
+                        .build();
+        return bookingService.findAllBookingByFieldId(searchRequest);
     }
 }

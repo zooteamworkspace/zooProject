@@ -5,6 +5,7 @@ import com.zoo.zooApplication.dao.model.FieldBookingDO;
 import com.zoo.zooApplication.dao.repository.FieldBookingRepository;
 import com.zoo.zooApplication.exception.InvalidRequestException;
 import com.zoo.zooApplication.request.CreateBookingRequest;
+import com.zoo.zooApplication.request.SearchFieldBookingRequest;
 import com.zoo.zooApplication.request.validator.BookingRequestValidator;
 import com.zoo.zooApplication.response.FieldBooking;
 import org.junit.Before;
@@ -12,15 +13,12 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,12 +64,13 @@ public class BookingServiceImplTest {
     public void testFindBookingByFieldId(){
         Example<FieldBookingDO> mockExampleBookingDO = Example.of(FieldBookingDO.builder().fieldId(123L).build());
         Page<FieldBookingDO> mockListDO = mock(Page.class);
+        SearchFieldBookingRequest mockSearchRequest = mock(SearchFieldBookingRequest.class);
+        when(SearchFieldBookingRequest.builder().fieldId("123").limit(2).offset(1).build()).thenReturn(mockSearchRequest);
         when(fieldBookingRepository.findAll(mockExampleBookingDO, PageRequest.of(0,2)))
                 .thenReturn(mockListDO);
         List<FieldBooking> mockResponse = mockListDO.stream().map(fieldBookingDOToResponseConverter::convert)
                 .collect(Collectors.toList());
-        assertEquals(mockResponse,bookingService.findAllBookingByFieldId(123L,
-                PageRequest.of(0,2)));
+        assertEquals(mockResponse,bookingService.findAllBookingByFieldId(mockSearchRequest));
     }
 
     @Test(expected = InvalidRequestException.class)

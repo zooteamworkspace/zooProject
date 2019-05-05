@@ -7,21 +7,21 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
-
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Builder
-@ApiModel(value = "Court", description = "Represent a court entity")
-public class Court {
+@ApiModel(value = "Field", description = "Represent a field entity")
+public class Field {
 
     @ApiModelProperty(value = "The unique identifier of the court", readOnly = true)
     private long id;
 
-    @ApiModelProperty(value = "The court name", readOnly = true)
-    private String courtName;
+    @ApiModelProperty(value = "The field name if available", readOnly = true)
+    private String fieldName;
 
-    @ApiModelProperty(value = "The all the field belong to this court", readOnly = true)
-    private List<Field> fields;
+    @ApiModelProperty(value = "The field type", readOnly = true)
+    private String fieldType;
+
+
 }

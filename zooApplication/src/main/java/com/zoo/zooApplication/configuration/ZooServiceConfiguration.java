@@ -1,7 +1,7 @@
 package com.zoo.zooApplication.configuration;
 
 import com.zoo.zooApplication.resource.BookingResource;
-import com.zoo.zooApplication.resource.CourtResource;
+import com.zoo.zooApplication.resource.CourtManagementResource;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
@@ -24,7 +24,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
 
     public ZooServiceConfiguration() {
         register(BookingResource.class);
-        register(CourtResource.class);
+        register(CourtManagementResource.class);
     }
 
     @PostConstruct

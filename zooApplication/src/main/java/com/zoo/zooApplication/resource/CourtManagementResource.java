@@ -14,13 +14,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/v1/courts")
+@Path("/v1/courtManagement")
 @Api(value = "Operations relating to courts and fields")
-public class CourtResource {
+public class CourtManagementResource {
     private CourtAndFieldService courtAndFieldService;
 
     @Inject
-    public CourtResource(CourtAndFieldService courtAndFieldService) {
+    public CourtManagementResource(CourtAndFieldService courtAndFieldService) {
         this.courtAndFieldService = courtAndFieldService;
     }
 
@@ -33,12 +33,21 @@ public class CourtResource {
         return "0.0.1";
     }
 
-    @ApiOperation(value = "find the court and its fields by court id", response = String.class)
+    @ApiOperation(value = "find the court and its fields by court id", response = Court.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it")})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{courtId}")
+    @Path("/courts/{courtId}")
     public Court findById(@PathParam("courtId") String courtId) {
         return courtAndFieldService.findCourtById(courtId);
+    }
+
+    @ApiOperation(value = "find the court and its fields by field id", response = Court.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it including the field requested")})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/fields/{fieldId}")
+    public Court findByFieldId(@PathParam("fieldId") String fieldId) {
+        return courtAndFieldService.findCourtByFieldId(fieldId);
     }
 }

@@ -1,5 +1,6 @@
 package com.zoo.zooApplication.service.impl;
 
+import com.zoo.zooApplication.converter.CourtDOToResponseConverter;
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
 import com.zoo.zooApplication.dao.repository.CourtRepository;
@@ -10,7 +11,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourtAndFieldServiceImpl implements CourtAndFieldService {
@@ -20,16 +21,31 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 
     private FieldRepository fieldRepository;
 
+    private CourtDOToResponseConverter courtDOToResponseConverter;
+
     @Inject
-    public CourtAndFieldServiceImpl(CourtRepository courtRepository, FieldRepository fieldRepository) {
+    public CourtAndFieldServiceImpl(CourtRepository courtRepository, FieldRepository fieldRepository, CourtDOToResponseConverter courtDOToResponseConverter) {
         this.courtRepository = courtRepository;
         this.fieldRepository = fieldRepository;
+        this.courtDOToResponseConverter = courtDOToResponseConverter;
     }
 
     @Override
     public Court findCourtById(String courtId) {
-        CourtDO test = courtRepository.findById(NumberUtils.toLong(courtId)).get();
-        List<FieldDO> sets = test.getFields();
-        return null;
+        Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
+        return court
+                .map(courtDOToResponseConverter::convert)
+                .orElse(null);
+    }
+
+    @Override
+    public Court findCourtByFieldId(String fieldId) {
+        Optional<FieldDO> field = fieldRepository.findById(NumberUtils.toLong(fieldId));
+        Optional<CourtDO> court = field
+                .map(fieldDO -> courtRepository.findById(fieldDO.getCourtId()))
+                .orElse(Optional.empty());
+        return court
+                .map(courtDOToResponseConverter::convert)
+                .orElse(null);
     }
 }

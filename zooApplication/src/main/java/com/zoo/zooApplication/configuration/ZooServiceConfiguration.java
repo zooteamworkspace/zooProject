@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import javax.annotation.PostConstruct;
 import javax.ws.rs.ApplicationPath;
 
+
 @Configuration
 @EnableJpaRepositories(basePackages = {"com.zoo.zooApplication.dao.repository"})
 @EntityScan(basePackages = {"com.zoo.zooApplication.dao.model"})

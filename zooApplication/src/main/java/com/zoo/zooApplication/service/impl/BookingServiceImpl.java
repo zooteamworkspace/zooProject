@@ -4,16 +4,21 @@ import com.zoo.zooApplication.converter.FieldBookingDOToResponseConverter;
 import com.zoo.zooApplication.dao.model.FieldBookingDO;
 import com.zoo.zooApplication.dao.repository.FieldBookingRepository;
 import com.zoo.zooApplication.request.CreateBookingRequest;
+import com.zoo.zooApplication.request.SearchFieldBookingRequest;
 import com.zoo.zooApplication.request.validator.BookingRequestValidator;
 import com.zoo.zooApplication.response.FieldBooking;
 import com.zoo.zooApplication.service.BookingService;
 import com.zoo.zooApplication.util.DateTimeUtil;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -67,4 +72,23 @@ public class BookingServiceImpl implements BookingService {
         FieldBookingDO result = fieldBookingRepository.save(doBuilder.build());
         return fieldBookingDOToResponseConverter.convert(result);
     }
+
+    @Override
+    public List<FieldBooking> findAllBookingByFieldId(SearchFieldBookingRequest searchRequest) {
+        FieldBookingDO fieldBookingDO = FieldBookingDO
+                .builder()
+                .fieldId(searchRequest.getFieldId())
+                .build();
+        Example<FieldBookingDO> exampleBookingDO = Example.of(fieldBookingDO);
+        Page<FieldBookingDO> listFieldBookingDO =
+                fieldBookingRepository.findAll(exampleBookingDO, searchRequest.getPageable());
+        FieldBookingDOToResponseConverter converter = new FieldBookingDOToResponseConverter();
+        List<FieldBooking> listFieldBooking = new ArrayList<>();
+        if (listFieldBookingDO!=null) {
+            listFieldBooking = listFieldBookingDO.stream()
+                    .map(converter::convert).collect(Collectors.toList());
+        }
+        return listFieldBooking;
+    }
+
 }

@@ -1,15 +1,13 @@
 package com.zoo.zooApplication.dao.model;
 
 import com.zoo.zooApplication.util.DOTimestampConverter;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -40,11 +38,14 @@ public class CourtDO {
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
 
-    // eager load
-    // unidirectional from court to field only since when fetching court, more likely to view the field also
-    @OneToMany(targetEntity = FieldDO.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "court_id")
-    private List<FieldDO> fields;
+    @OneToMany(targetEntity = FieldDO.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
+    private List<FieldDO> fields = new ArrayList<>();
+
+    public CourtDO addField(FieldDO fieldDO) {
+        fields.add(fieldDO);
+        fieldDO.setCourt(this);
+        return this;
+    }
 
 
 }

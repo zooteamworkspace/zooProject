@@ -8,8 +8,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-@Getter
 @Builder
+@Getter
 @Setter
 public class SearchFieldBookingRequest {
 

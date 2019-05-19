@@ -5,6 +5,7 @@ import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
 import com.zoo.zooApplication.dao.repository.CourtRepository;
 import com.zoo.zooApplication.dao.repository.FieldRepository;
+import com.zoo.zooApplication.request.CreateFieldRequest;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -41,11 +42,25 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
     @Override
     public Court findCourtByFieldId(String fieldId) {
         Optional<FieldDO> field = fieldRepository.findById(NumberUtils.toLong(fieldId));
-        Optional<CourtDO> court = field
-                .map(fieldDO -> courtRepository.findById(fieldDO.getCourtId()))
-                .orElse(Optional.empty());
-        return court
+        return field
+                .map(fieldDO -> fieldDO.getCourt())
                 .map(courtDOToResponseConverter::convert)
                 .orElse(null);
+    }
+
+    @Override
+    public Court addFieldToCourt(String courtId, CreateFieldRequest createFieldRequest) {
+        Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
+        FieldDO fieldDO = FieldDO
+                .builder()
+                .fieldName(createFieldRequest.getFieldName())
+                .fieldType(createFieldRequest.getFieldType())
+                .build();
+        return court
+                .map(courtDO -> courtDO.addField(fieldDO))
+                .map(courtRepository::save)
+                .map(courtDOToResponseConverter::convert)
+                .orElse(null);
+
     }
 }

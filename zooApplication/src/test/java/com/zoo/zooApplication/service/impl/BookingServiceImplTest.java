@@ -18,9 +18,9 @@ import org.springframework.data.domain.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -61,16 +61,24 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void testFindBookingByFieldId(){
-        Example<FieldBookingDO> mockExampleBookingDO = Example.of(FieldBookingDO.builder().fieldId(123L).build());
-        Page<FieldBookingDO> mockListDO = mock(Page.class);
-        SearchFieldBookingRequest mockSearchRequest = mock(SearchFieldBookingRequest.class);
-        when(SearchFieldBookingRequest.builder().fieldId("123").limit(2).offset(1).build()).thenReturn(mockSearchRequest);
-        when(fieldBookingRepository.findAll(mockExampleBookingDO, PageRequest.of(0,2)))
-                .thenReturn(mockListDO);
-        List<FieldBooking> mockResponse = mockListDO.stream().map(fieldBookingDOToResponseConverter::convert)
-                .collect(Collectors.toList());
-        assertEquals(mockResponse,bookingService.findAllBookingByFieldId(mockSearchRequest));
+    public void testFindBookingByFieldId() {
+        List<FieldBookingDO> mockListDO = new ArrayList<>();
+        mockListDO.add(mock(FieldBookingDO.class));
+        mockListDO.add(mock(FieldBookingDO.class));
+        Page<FieldBookingDO> mockPage = new PageImpl<>(mockListDO);
+        SearchFieldBookingRequest mockSearchRequest = SearchFieldBookingRequest.builder().fieldId("123").limit(2).offset(0).build();
+        ArgumentCaptor<Example<FieldBookingDO>> exampleCapture = ArgumentCaptor.forClass(Example.class);
+        ArgumentCaptor<PageRequest> pageCapture = ArgumentCaptor.forClass(PageRequest.class);
+        when(fieldBookingRepository.findAll(any(Example.class), any(Pageable.class))).thenReturn(mockPage);
+        List<FieldBooking> mockResponse = new ArrayList<>();
+        mockResponse.add(mock(FieldBooking.class));
+        mockResponse.add(mock(FieldBooking.class));
+        when(fieldBookingDOToResponseConverter.convert(mockListDO.get(0))).thenReturn(mockResponse.get(0));
+        when(fieldBookingDOToResponseConverter.convert(mockListDO.get(1))).thenReturn(mockResponse.get(1));
+        assertEquals(mockResponse, bookingService.findAllBookingByFieldId(mockSearchRequest));
+        verify(fieldBookingRepository).findAll(exampleCapture.capture(), pageCapture.capture());
+        assertEquals(mockSearchRequest.getPageable(), pageCapture.getValue());
+        assertEquals(Long.valueOf(123), exampleCapture.getValue().getProbe().getFieldId());
     }
 
     @Test(expected = InvalidRequestException.class)

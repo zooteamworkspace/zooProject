@@ -12,12 +12,12 @@ import com.zoo.zooApplication.util.DateTimeUtil;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,11 +40,9 @@ public class BookingServiceImpl implements BookingService {
     public FieldBooking findBookingById(String bookingId) {
         bookingRequestValidator.validateBookingId(bookingId);
         Optional<FieldBookingDO> fieldBookingDO = fieldBookingRepository.findById(NumberUtils.toLong(bookingId));
-        FieldBooking fieldBooking = null;
-        if (fieldBookingDO.isPresent()) {
-            fieldBooking = fieldBookingDOToResponseConverter.convert(fieldBookingDO.get());
-        }
-        return fieldBooking;
+        return fieldBookingDO
+                .map(fieldBookingDOToResponseConverter::convert)
+                .orElse(null);
     }
 
     @Override
@@ -82,13 +80,10 @@ public class BookingServiceImpl implements BookingService {
         Example<FieldBookingDO> exampleBookingDO = Example.of(fieldBookingDO);
         Page<FieldBookingDO> listFieldBookingDO =
                 fieldBookingRepository.findAll(exampleBookingDO, searchRequest.getPageable());
-        FieldBookingDOToResponseConverter converter = new FieldBookingDOToResponseConverter();
-        List<FieldBooking> listFieldBooking = new ArrayList<>();
-        if (listFieldBookingDO!=null) {
-            listFieldBooking = listFieldBookingDO.stream()
-                    .map(converter::convert).collect(Collectors.toList());
-        }
-        return listFieldBooking;
+        return listFieldBookingDO
+                .stream()
+                .map(fieldBookingDOToResponseConverter::convert)
+                .collect(Collectors.toList());
     }
 
 }

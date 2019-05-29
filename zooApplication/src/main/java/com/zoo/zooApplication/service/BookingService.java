@@ -14,4 +14,6 @@ public interface BookingService {
     FieldBooking createBooking(CreateBookingRequest bookingRequest);
 
     List<FieldBooking> findAllBookingByFieldId(SearchFieldBookingRequest searchRequest);
+
+    List<FieldBooking> findBookingByUserInfo(SearchFieldBookingRequest searchFieldBookingRequest);
 }

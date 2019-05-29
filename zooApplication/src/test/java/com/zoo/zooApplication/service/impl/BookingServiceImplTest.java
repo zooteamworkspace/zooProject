@@ -81,6 +81,35 @@ public class BookingServiceImplTest {
         assertEquals(Long.valueOf(123), exampleCapture.getValue().getProbe().getFieldId());
     }
 
+    @Test
+    public void testFindBookingByUserInfo(){
+        List<FieldBookingDO> mockListDO = new ArrayList<>();
+        mockListDO.add(mock(FieldBookingDO.class));
+        mockListDO.add(mock(FieldBookingDO.class));
+        Page<FieldBookingDO> mockPage = new PageImpl<>(mockListDO);
+        SearchFieldBookingRequest mockSearchRequest =
+                SearchFieldBookingRequest.builder()
+                        .bookerEmail("booker1@email.com")
+                        .bookerPhone("0123456789")
+                        .limit(2)
+                        .offset(0)
+                        .build();
+        ArgumentCaptor<Example<FieldBookingDO>> exampleCapture = ArgumentCaptor.forClass(Example.class);
+        ArgumentCaptor<PageRequest> pageCapture = ArgumentCaptor.forClass(PageRequest.class);
+        when(fieldBookingRepository.findAll(any(Example.class), any(Pageable.class))).thenReturn(mockPage);
+
+        List<FieldBooking> mockResponse = new ArrayList<>();
+        mockResponse.add(mock(FieldBooking.class));
+        mockResponse.add(mock(FieldBooking.class));
+        when(fieldBookingDOToResponseConverter.convert(mockListDO.get(0))).thenReturn(mockResponse.get(0));
+        when(fieldBookingDOToResponseConverter.convert(mockListDO.get(1))).thenReturn(mockResponse.get(1));
+        assertEquals(mockResponse, bookingService.findBookingByUserInfo(mockSearchRequest));
+        verify(fieldBookingRepository).findAll(exampleCapture.capture(), pageCapture.capture());
+        assertEquals(mockSearchRequest.getSortedPageable(), pageCapture.getValue());
+        assertEquals("0123456789", exampleCapture.getValue().getProbe().getBookerPhone());
+        assertEquals("booker1@email.com", exampleCapture.getValue().getProbe().getBookerEmail());
+    }
+
     @Test(expected = InvalidRequestException.class)
     public void testCreateBookingInvalidRequest() {
         CreateBookingRequest testRequest = mock(CreateBookingRequest.class);

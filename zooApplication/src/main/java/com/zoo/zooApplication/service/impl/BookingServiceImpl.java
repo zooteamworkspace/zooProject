@@ -87,15 +87,14 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<FieldBooking> findBookingByUserInfo(SearchFieldBookingRequest searchRequest){
-        FieldBookingDO fieldBookingDO = FieldBookingDO
-                .builder()
-                .bookerEmail(searchRequest.getBookerEmail())
-                .bookerPhone(searchRequest.getBookerPhone())
-                .build();
-        Example<FieldBookingDO> exampleBookingDO = Example.of(fieldBookingDO);
-        Page<FieldBookingDO> listFieldBookingDO =
-                fieldBookingRepository.findAll(exampleBookingDO, searchRequest.getSortedPageable());
+    public List<FieldBooking> findByUserInfo
+            (SearchFieldBookingRequest searchRequest){
+        List<FieldBookingDO> listFieldBookingDO =
+                fieldBookingRepository.findByBookerPhoneOrBookerEmailOrderByUpdatedAtDesc(
+                        searchRequest.getBookerPhone(),
+                        searchRequest.getBookerEmail(),
+                        searchRequest.getPageable()
+                );
         return listFieldBookingDO
                 .stream()
                 .map(fieldBookingDOToResponseConverter::convert)

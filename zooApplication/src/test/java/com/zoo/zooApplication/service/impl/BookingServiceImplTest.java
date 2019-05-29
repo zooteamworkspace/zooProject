@@ -82,11 +82,10 @@ public class BookingServiceImplTest {
     }
 
     @Test
-    public void testFindBookingByUserInfo(){
+    public void testFindByUserInfo() {
         List<FieldBookingDO> mockListDO = new ArrayList<>();
         mockListDO.add(mock(FieldBookingDO.class));
         mockListDO.add(mock(FieldBookingDO.class));
-        Page<FieldBookingDO> mockPage = new PageImpl<>(mockListDO);
         SearchFieldBookingRequest mockSearchRequest =
                 SearchFieldBookingRequest.builder()
                         .bookerEmail("booker1@email.com")
@@ -94,20 +93,24 @@ public class BookingServiceImplTest {
                         .limit(2)
                         .offset(0)
                         .build();
-        ArgumentCaptor<Example<FieldBookingDO>> exampleCapture = ArgumentCaptor.forClass(Example.class);
+        ArgumentCaptor<String> emailCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> phoneCapture = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<PageRequest> pageCapture = ArgumentCaptor.forClass(PageRequest.class);
-        when(fieldBookingRepository.findAll(any(Example.class), any(Pageable.class))).thenReturn(mockPage);
+        when(fieldBookingRepository.findByBookerPhoneOrBookerEmailOrderByUpdatedAtDesc
+                (any(String.class),any(String.class), any(Pageable.class))).thenReturn(mockListDO);
 
         List<FieldBooking> mockResponse = new ArrayList<>();
         mockResponse.add(mock(FieldBooking.class));
         mockResponse.add(mock(FieldBooking.class));
         when(fieldBookingDOToResponseConverter.convert(mockListDO.get(0))).thenReturn(mockResponse.get(0));
         when(fieldBookingDOToResponseConverter.convert(mockListDO.get(1))).thenReturn(mockResponse.get(1));
-        assertEquals(mockResponse, bookingService.findBookingByUserInfo(mockSearchRequest));
-        verify(fieldBookingRepository).findAll(exampleCapture.capture(), pageCapture.capture());
-        assertEquals(mockSearchRequest.getSortedPageable(), pageCapture.getValue());
-        assertEquals("0123456789", exampleCapture.getValue().getProbe().getBookerPhone());
-        assertEquals("booker1@email.com", exampleCapture.getValue().getProbe().getBookerEmail());
+
+        assertEquals(mockResponse, bookingService.findByUserInfo(mockSearchRequest));
+        verify(fieldBookingRepository).findByBookerPhoneOrBookerEmailOrderByUpdatedAtDesc
+                (phoneCapture.capture(), emailCapture.capture(), pageCapture.capture());
+        assertEquals(mockSearchRequest.getPageable(), pageCapture.getValue());
+        assertEquals("0123456789", phoneCapture.getValue());
+        assertEquals("booker1@email.com", emailCapture.getValue());
     }
 
     @Test(expected = InvalidRequestException.class)

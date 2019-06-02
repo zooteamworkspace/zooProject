@@ -49,6 +49,20 @@ public class CourtDOToResponseConverterTest {
     }
 
     @Test
+    public void testConvertWithCourtAddress() {
+        when(courtDO.getCourtAddress()).thenReturn("123 Test");
+        Court court = testConverter.convert(courtDO);
+        assertEquals("123 Test", court.getCourtAddress());
+    }
+
+    @Test
+    public void testConvertWithCourtPhone() {
+        when(courtDO.getCourtPhone()).thenReturn("123456");
+        Court court = testConverter.convert(courtDO);
+        assertEquals("123456", court.getCourtPhone());
+    }
+
+    @Test
     public void testConvertWithEmptyField() {
         when(courtDO.getFields()).thenReturn(new ArrayList<>());
         Court court = testConverter.convert(courtDO);

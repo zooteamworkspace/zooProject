@@ -3,8 +3,9 @@ DROP TABLE IF EXISTS FIELDS;
 
 CREATE TABLE COURTS (
     id SERIAL PRIMARY KEY,
-    owner_id    INT,
     court_name  VARCHAR(20),
+    court_address VARCHAR(256),
+    court_phone VARCHAR(20),
     created_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL
 );
@@ -14,6 +15,7 @@ CREATE TABLE FIELDS (
     court_id INT,
     field_name VARCHAR(20),
     field_type VARCHAR(20),
+    sub_field_ids VARCHAR(128),
     created_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL
 );

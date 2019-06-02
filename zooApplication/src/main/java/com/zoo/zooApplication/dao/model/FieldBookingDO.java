@@ -1,6 +1,6 @@
 package com.zoo.zooApplication.dao.model;
 
-import com.zoo.zooApplication.util.DOTimestampConverter;
+import com.zoo.zooApplication.dao.util.DOTimestampConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

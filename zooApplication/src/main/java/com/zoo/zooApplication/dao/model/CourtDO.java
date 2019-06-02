@@ -1,6 +1,6 @@
 package com.zoo.zooApplication.dao.model;
 
-import com.zoo.zooApplication.util.DOTimestampConverter;
+import com.zoo.zooApplication.dao.util.DOTimestampConverter;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -23,10 +23,13 @@ public class CourtDO {
     private Long id;
 
     @Column
-    private Long ownerId;
+    private String courtName;
 
     @Column
-    private String courtName;
+    private String courtAddress;
+
+    @Column
+    private String courtPhone;
 
     @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
@@ -39,7 +42,7 @@ public class CourtDO {
     private ZonedDateTime updatedAt;
 
     @OneToMany(targetEntity = FieldDO.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
-    private List<FieldDO> fields = new ArrayList<>();
+    private final List<FieldDO> fields = new ArrayList<>();
 
     public CourtDO addField(FieldDO fieldDO) {
         fields.add(fieldDO);

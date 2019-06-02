@@ -1,5 +1,6 @@
-package com.zoo.zooApplication.util;
+package com.zoo.zooApplication.dao.util;
 
+import com.zoo.zooApplication.dao.util.DOTimestampConverter;
 import org.junit.Test;
 
 import java.time.*;

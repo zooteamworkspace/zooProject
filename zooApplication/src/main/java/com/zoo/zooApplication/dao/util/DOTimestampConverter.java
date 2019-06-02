@@ -1,4 +1,4 @@
-package com.zoo.zooApplication.util;
+package com.zoo.zooApplication.dao.util;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

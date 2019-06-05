@@ -96,6 +96,7 @@ public class BookingServiceImplTest {
         ArgumentCaptor<String> emailCapture = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> phoneCapture = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<PageRequest> pageCapture = ArgumentCaptor.forClass(PageRequest.class);
+
         when(fieldBookingRepository.findByBookerPhoneOrBookerEmailOrderByTimeInDesc
                 (any(String.class),any(String.class), any(Pageable.class))).thenReturn(mockListDO);
 

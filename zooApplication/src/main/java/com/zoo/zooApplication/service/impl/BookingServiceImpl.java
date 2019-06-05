@@ -89,10 +89,12 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<FieldBooking> findByUserInfo
             (SearchFieldBookingRequest searchRequest){
+        ZonedDateTime timeIn = DateTimeUtil.parseISO8601Format(searchRequest.getTimeIn());
         List<FieldBookingDO> listFieldBookingDO =
-                fieldBookingRepository.findByBookerPhoneOrBookerEmailOrderByTimeInDesc(
+                fieldBookingRepository.findByBookerPhoneOrBookerEmailAndTimeInGreaterThanEqual(
                         searchRequest.getBookerPhone(),
                         searchRequest.getBookerEmail(),
+                        timeIn,
                         searchRequest.getPageable()
                 );
         return listFieldBookingDO

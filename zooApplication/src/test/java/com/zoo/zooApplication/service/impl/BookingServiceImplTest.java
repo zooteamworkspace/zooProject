@@ -90,15 +90,18 @@ public class BookingServiceImplTest {
                 SearchFieldBookingRequest.builder()
                         .bookerEmail("booker1@email.com")
                         .bookerPhone("0123456789")
+                        .timeIn("2019-05-06T01:01:01Z")
                         .limit(2)
                         .offset(0)
                         .build();
         ArgumentCaptor<String> emailCapture = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> phoneCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ZonedDateTime> timeIn = ArgumentCaptor.forClass(ZonedDateTime.class);
         ArgumentCaptor<PageRequest> pageCapture = ArgumentCaptor.forClass(PageRequest.class);
 
-        when(fieldBookingRepository.findByBookerPhoneOrBookerEmailOrderByTimeInDesc
-                (any(String.class),any(String.class), any(Pageable.class))).thenReturn(mockListDO);
+        when(fieldBookingRepository.findByBookerPhoneOrBookerEmailAndTimeInGreaterThanEqual
+                (any(String.class),any(String.class), any(ZonedDateTime.class),any(Pageable.class)))
+                    .thenReturn(mockListDO);
 
         List<FieldBooking> mockResponse = new ArrayList<>();
         mockResponse.add(mock(FieldBooking.class));
@@ -107,11 +110,14 @@ public class BookingServiceImplTest {
         when(fieldBookingDOToResponseConverter.convert(mockListDO.get(1))).thenReturn(mockResponse.get(1));
 
         assertEquals(mockResponse, bookingService.findByUserInfo(mockSearchRequest));
-        verify(fieldBookingRepository).findByBookerPhoneOrBookerEmailOrderByTimeInDesc
-                (phoneCapture.capture(), emailCapture.capture(), pageCapture.capture());
+        verify(fieldBookingRepository).findByBookerPhoneOrBookerEmailAndTimeInGreaterThanEqual
+                (phoneCapture.capture(), emailCapture.capture(), timeIn.capture(), pageCapture.capture());
         assertEquals(mockSearchRequest.getPageable(), pageCapture.getValue());
         assertEquals("0123456789", phoneCapture.getValue());
         assertEquals("booker1@email.com", emailCapture.getValue());
+        assertEquals(ZonedDateTime.of(LocalDateTime.of
+                        (2019, 05, 06, 01, 01, 01), ZoneId.of("UTC")),
+                            timeIn.getValue());
     }
 
     @Test(expected = InvalidRequestException.class)

@@ -91,18 +91,19 @@ public class BookingResource {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Resource found")})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("searchUserInfo")
-    public List<FieldBooking> findByUserInfo(@QueryParam("phone") String phone,
-                                             @QueryParam("email") String email,
-                                             @QueryParam("limit") int limit,
-                                             @QueryParam("offset") int offset){
+    @Path("searchByUserInfo")
+    public List<FieldBooking> findByUserInfo
+            (@QueryParam("bookerPhone") String bookerPhone,
+             @QueryParam("bookerEmail") String bookerEmail,
+             @QueryParam("limit") int limit,
+             @QueryParam("offset") int offset){
         SearchFieldBookingRequest searchRequest =
                 SearchFieldBookingRequest.builder()
-                    .bookerEmail(phone)
-                    .bookerPhone(email)
-                    .limit(limit)
-                    .offset(offset)
-                    .build();
-        return bookingService.findBookingByUserInfo(searchRequest);
+                        .bookerEmail(bookerEmail)
+                        .bookerPhone(bookerPhone)
+                        .limit(limit)
+                        .offset(offset)
+                        .build();
+        return bookingService.findByUserInfo(searchRequest);
     }
 }

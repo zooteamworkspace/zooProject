@@ -29,16 +29,8 @@ public class SearchFieldBookingRequest {
     @ApiModelProperty(value = "The phone number of the booker")
     private String bookerPhone;
 
-    private Sort sortByUpdatedTimeDesc() {
-        return new Sort(Sort.Direction.DESC, "updatedAt");
-    }
-
     public Long getFieldId(){
         return NumberUtils.toLong(fieldId);
-    }
-
-    public Pageable getSortedPageable(){
-        return PageRequest.of(offset,limit,sortByUpdatedTimeDesc());
     }
 
     public Pageable getPageable(){

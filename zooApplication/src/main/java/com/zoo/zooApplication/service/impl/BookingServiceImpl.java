@@ -86,4 +86,20 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<FieldBooking> findByUserInfo
+            (SearchFieldBookingRequest searchRequest){
+        ZonedDateTime timeIn = DateTimeUtil.parseISO8601Format(searchRequest.getTimeIn());
+        List<FieldBookingDO> listFieldBookingDO =
+                fieldBookingRepository.findByBookerPhoneOrBookerEmailAndTimeInGreaterThanEqual(
+                        searchRequest.getBookerPhone(),
+                        searchRequest.getBookerEmail(),
+                        timeIn,
+                        searchRequest.getPageable()
+                );
+        return listFieldBookingDO
+                .stream()
+                .map(fieldBookingDOToResponseConverter::convert)
+                .collect(Collectors.toList());
+    }
 }

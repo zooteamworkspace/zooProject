@@ -74,7 +74,6 @@ public class BookingResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/search")
-
     public List<FieldBooking> findByFieldId(@QueryParam("fieldId") String fieldId,
                                             @QueryParam("limit") int limit,
                                             @QueryParam("offset") int offset) {
@@ -86,5 +85,25 @@ public class BookingResource {
                         .limit(limit)
                         .build();
         return bookingService.findAllBookingByFieldId(searchRequest);
+    }
+
+    @ApiOperation(value = "proceed to user information after time slot allocation")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Resource found")})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("searchByUserInfo")
+    public List<FieldBooking> findByUserInfo
+            (@QueryParam("bookerPhone") String bookerPhone,
+             @QueryParam("bookerEmail") String bookerEmail,
+             @QueryParam("limit") int limit,
+             @QueryParam("offset") int offset){
+        SearchFieldBookingRequest searchRequest =
+                SearchFieldBookingRequest.builder()
+                        .bookerEmail(bookerEmail)
+                        .bookerPhone(bookerPhone)
+                        .limit(limit)
+                        .offset(offset)
+                        .build();
+        return bookingService.findByUserInfo(searchRequest);
     }
 }

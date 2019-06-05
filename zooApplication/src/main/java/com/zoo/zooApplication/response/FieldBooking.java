@@ -23,4 +23,9 @@ public class FieldBooking {
     @ApiModelProperty(value = "The identifier of the field this booking for", readOnly = true)
     private long fieldId;
 
+    @ApiModelProperty(value = "The booker's email address of the relevant booking", readOnly = true)
+    private String bookerEmail;
+
+    @ApiModelProperty(value = "The booker's phone number of the relevant booking", readOnly = true)
+    private String bookerPhone;
 }

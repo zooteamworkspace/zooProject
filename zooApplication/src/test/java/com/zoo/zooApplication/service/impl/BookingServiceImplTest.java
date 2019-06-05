@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class BookingServiceImplTest {
@@ -79,6 +80,48 @@ public class BookingServiceImplTest {
         verify(fieldBookingRepository).findAll(exampleCapture.capture(), pageCapture.capture());
         assertEquals(mockSearchRequest.getPageable(), pageCapture.getValue());
         assertEquals(Long.valueOf(123), exampleCapture.getValue().getProbe().getFieldId());
+    }
+
+    @Test
+    public void testFindByUserInfo() {
+        List<FieldBookingDO> mockListDO = new ArrayList<>();
+        mockListDO.add(mock(FieldBookingDO.class));
+        mockListDO.add(mock(FieldBookingDO.class));
+        SearchFieldBookingRequest mockSearchRequest =
+                SearchFieldBookingRequest.builder()
+                        .bookerEmail("booker1@email.com")
+                        .bookerPhone("0123456789")
+                        .timeIn("2019-05-06T01:01:01Z")
+                        .limit(2)
+                        .offset(0)
+                        .build();
+        ArgumentCaptor<String> emailCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> phoneCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<ZonedDateTime> timeInCapture = ArgumentCaptor.forClass(ZonedDateTime.class);
+        ArgumentCaptor<PageRequest> pageCapture = ArgumentCaptor.forClass(PageRequest.class);
+
+        when(fieldBookingRepository.findByBookerPhoneOrBookerEmailAndTimeInGreaterThanEqual
+                (any(String.class),any(String.class), any(ZonedDateTime.class),any(Pageable.class)))
+                    .thenReturn(mockListDO);
+
+        List<FieldBooking> mockResponse = new ArrayList<>();
+        mockResponse.add(mock(FieldBooking.class));
+        mockResponse.add(mock(FieldBooking.class));
+        when(fieldBookingDOToResponseConverter.convert(mockListDO.get(0))).thenReturn(mockResponse.get(0));
+        when(fieldBookingDOToResponseConverter.convert(mockListDO.get(1))).thenReturn(mockResponse.get(1));
+
+        assertEquals(mockResponse, bookingService.findByUserInfo(mockSearchRequest));
+        verify(fieldBookingRepository).findByBookerPhoneOrBookerEmailAndTimeInGreaterThanEqual
+                (phoneCapture.capture(), emailCapture.capture(), timeInCapture.capture(), pageCapture.capture());
+        assertEquals(mockSearchRequest.getPageable(), pageCapture.getValue());
+        assertEquals("0123456789", phoneCapture.getValue());
+        assertEquals("booker1@email.com", emailCapture.getValue());
+        assertTrue(ZonedDateTime.of(LocalDateTime.of
+                        (2019, 05, 07, 01, 01, 01), ZoneId.of("UTC"))
+                        .isAfter(timeInCapture.getValue()));
+        assertTrue(ZonedDateTime.of(LocalDateTime.of
+                        (2019, 05, 06, 01, 01, 01), ZoneId.of("UTC"))
+                        .isEqual(timeInCapture.getValue()));
     }
 
     @Test(expected = InvalidRequestException.class)

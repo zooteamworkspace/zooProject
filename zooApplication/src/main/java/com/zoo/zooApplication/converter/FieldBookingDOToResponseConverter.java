@@ -17,6 +17,8 @@ public class FieldBookingDOToResponseConverter {
                 .id(fieldBookingDO.getId())
                 .fieldId(fieldBookingDO.getFieldId())
                 .courtId(fieldBookingDO.getCourtId())
+                .bookerEmail(fieldBookingDO.getBookerEmail())
+                .bookerPhone(fieldBookingDO.getBookerPhone())
                 .build();
     }
 }

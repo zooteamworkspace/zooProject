@@ -5,13 +5,17 @@ import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
 import com.zoo.zooApplication.dao.repository.CourtRepository;
 import com.zoo.zooApplication.dao.repository.FieldRepository;
+import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
+import com.zoo.zooApplication.request.FieldRequest;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.service.CourtAndFieldService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +33,18 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
         this.courtRepository = courtRepository;
         this.fieldRepository = fieldRepository;
         this.courtDOToResponseConverter = courtDOToResponseConverter;
+    }
+
+    @Override
+    public Court createCourt(CreateCourtRequest createCourtRequest) {
+        CourtDO courtDO = CourtDO.builder()
+                .courtName(createCourtRequest.getCourtName())
+                .courtAddress(createCourtRequest.getCourtAddress())
+                .courtPhone(createCourtRequest.getCourtPhone())
+                .build();
+
+        Court court = courtDOToResponseConverter.convert(courtRepository.save(courtDO));
+        return court;
     }
 
     @Override
@@ -51,16 +67,27 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
     @Override
     public Court addFieldToCourt(String courtId, CreateFieldRequest createFieldRequest) {
         Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
-        FieldDO fieldDO = FieldDO
-                .builder()
-                .fieldName(createFieldRequest.getFieldName())
-                .fieldType(createFieldRequest.getFieldType())
-                .build();
+
         return court
-                .map(courtDO -> courtDO.addField(fieldDO))
+                .map(courtDO -> addFieldDO(courtDO, createFieldRequest.getFieldRequests()))
                 .map(courtRepository::save)
                 .map(courtDOToResponseConverter::convert)
                 .orElse(null);
 
+    }
+
+    private CourtDO addFieldDO(CourtDO courtDO, List<FieldRequest> fieldRequests) {
+        if (CollectionUtils.isNotEmpty(fieldRequests)) {
+            fieldRequests
+                    .stream()
+                    .map(request -> FieldDO
+                            .builder()
+                            .fieldName(request.getFieldName())
+                            .fieldType(request.getFieldType())
+                            .subFieldIds(request.getSubFieldIds())
+                            .build())
+                    .forEach(fieldDO -> courtDO.addField(fieldDO));
+        }
+        return courtDO;
     }
 }

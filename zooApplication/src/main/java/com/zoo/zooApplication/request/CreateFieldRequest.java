@@ -6,16 +6,16 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
-@ApiModel(value = "CreateFieldRequest", description = "The request to add a field to a court")
+@ApiModel(value = "CreateFieldRequest", description = "The request to add field(s) to a court")
 public class CreateFieldRequest {
-    @ApiModelProperty(value = "The field name")
-    private String fieldName;
 
-    @ApiModelProperty(value = "The field type")
-    private String fieldType;
+    @ApiModelProperty(value = "List of field request to add to a court")
+    private List<FieldRequest> fieldRequests;
 
 
 }

@@ -32,6 +32,8 @@ public class CourtDOToResponseConverter {
                 .builder()
                 .id(courtDO.getId())
                 .courtName(courtDO.getCourtName())
+                .courtAddress(courtDO.getCourtAddress())
+                .courtPhone(courtDO.getCourtPhone())
                 .fields(convertFields(courtDO))
                 .build();
     }

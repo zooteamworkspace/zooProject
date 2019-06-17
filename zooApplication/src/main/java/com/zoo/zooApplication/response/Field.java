@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
@@ -22,6 +24,9 @@ public class Field {
 
     @ApiModelProperty(value = "The field type", readOnly = true)
     private String fieldType;
+
+    @ApiModelProperty(value = "The list of field id that combine to this field, if this list is present mean that this field is not a unit field ", readOnly = true)
+    private List<String> subFieldIds;
 
 
 }

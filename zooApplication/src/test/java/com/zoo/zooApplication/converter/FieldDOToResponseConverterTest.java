@@ -1,13 +1,13 @@
 package com.zoo.zooApplication.converter;
 
-import com.zoo.zooApplication.dao.model.FieldBookingDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
 import com.zoo.zooApplication.response.Field;
-import com.zoo.zooApplication.response.FieldBooking;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -47,6 +47,13 @@ public class FieldDOToResponseConverterTest {
         when(fieldDO.getFieldType()).thenReturn("type");
         Field field = testConverter.convert(fieldDO);
         assertEquals("type", field.getFieldType());
+    }
+
+    @Test
+    public void testConvertWithSubFieldIds() {
+        when(fieldDO.getSubFieldIds()).thenReturn(Arrays.asList("1", "2"));
+        Field field = testConverter.convert(fieldDO);
+        assertEquals(Arrays.asList("1", "2"), field.getSubFieldIds());
     }
 
 }

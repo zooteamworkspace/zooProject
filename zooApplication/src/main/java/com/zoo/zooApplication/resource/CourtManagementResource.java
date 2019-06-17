@@ -1,5 +1,6 @@
 package com.zoo.zooApplication.resource;
 
+import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.service.CourtAndFieldService;
@@ -7,10 +8,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 @Path("/v1/courtManagement")
 @Api(value = "Operations relating to courts and fields")
@@ -31,6 +37,23 @@ public class CourtManagementResource {
         return "0.0.1";
     }
 
+    @ApiOperation(value = "create a new court", response = Court.class)
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Court has been added")})
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/")
+    public Response createBooking(@RequestBody CreateCourtRequest createCourtRequest, @Context UriInfo uriInfo) {
+        Court court = courtAndFieldService.createCourt(createCourtRequest);
+        URI locationURI = uriInfo
+                .getAbsolutePathBuilder()
+                .path(String.valueOf(court.getId()))
+                .build();
+        return Response
+                .created(locationURI)
+                .entity(court)
+                .build();
+    }
+
     @ApiOperation(value = "find the court and its fields by court id", response = Court.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it")})
     @GET
@@ -41,7 +64,7 @@ public class CourtManagementResource {
     }
 
     @ApiOperation(value = "add a new field to the court", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Successfully added the field to court")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the field to court")})
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fields")
@@ -57,4 +80,5 @@ public class CourtManagementResource {
     public Court findByFieldId(@PathParam("fieldId") String fieldId) {
         return courtAndFieldService.findCourtByFieldId(fieldId);
     }
+
 }

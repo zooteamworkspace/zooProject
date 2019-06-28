@@ -38,9 +38,13 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
     @Override
     public Court createCourt(CreateCourtRequest createCourtRequest) {
         CourtDO courtDO = CourtDO.builder()
-                .courtName(createCourtRequest.getCourtName())
-                .courtAddress(createCourtRequest.getCourtAddress())
-                .courtPhone(createCourtRequest.getCourtPhone())
+                .name(createCourtRequest.getName())
+                .addressStreet(createCourtRequest.getAddressStreet())
+                .addressWard(createCourtRequest.getAddressWard())
+                .addressDistrict(createCourtRequest.getAddressDistrict())
+                .addressCity(createCourtRequest.getAddressCity())
+                .phoneNumber(createCourtRequest.getPhoneNumber())
+                .addressCountry("VN") // hard code to Viet Nam for now
                 .build();
 
         Court court = courtDOToResponseConverter.convert(courtRepository.save(courtDO));
@@ -66,6 +70,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 
     @Override
     public Court addFieldToCourt(String courtId, CreateFieldRequest createFieldRequest) {
+        // TODO: eventually, will need to validate CreateFieldRequest, right now assume input correct
         Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
 
         return court
@@ -82,7 +87,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
                     .stream()
                     .map(request -> FieldDO
                             .builder()
-                            .fieldName(request.getFieldName())
+                            .name(request.getName())
                             .fieldType(request.getFieldType())
                             .subFieldIds(request.getSubFieldIds())
                             .build())

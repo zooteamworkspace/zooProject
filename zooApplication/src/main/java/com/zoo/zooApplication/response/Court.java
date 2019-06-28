@@ -20,13 +20,25 @@ public class Court {
     private long id;
 
     @ApiModelProperty(value = "The court name which is also the business name", readOnly = true)
-    private String courtName;
+    private String name;
 
-    @ApiModelProperty(value = "The address of the court", readOnly = true)
-    private String courtAddress;
+    @ApiModelProperty(value = "The street address of the court", readOnly = true)
+    private String addressStreet;
+
+    @ApiModelProperty(value = "The ward address of the court", readOnly = true)
+    private String addressWard;
+
+    @ApiModelProperty(value = "The district address of the court", readOnly = true)
+    private String addressDistrict;
+
+    @ApiModelProperty(value = "The city address of the court", readOnly = true)
+    private String addressCity;
+
+    @ApiModelProperty(value = "The country address of the court", readOnly = true)
+    private String addressCountry;
 
     @ApiModelProperty(value = "The phone number of the court", readOnly = true)
-    private String courtPhone;
+    private String phoneNumber;
 
     @ApiModelProperty(value = "The all the field belong to this court", readOnly = true)
     private List<Field> fields;

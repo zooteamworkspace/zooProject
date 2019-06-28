@@ -43,23 +43,51 @@ public class CourtDOToResponseConverterTest {
 
     @Test
     public void testConvertWithCourtName() {
-        when(courtDO.getCourtName()).thenReturn("name");
+        when(courtDO.getName()).thenReturn("name");
         Court court = testConverter.convert(courtDO);
-        assertEquals("name", court.getCourtName());
+        assertEquals("name", court.getName());
     }
 
     @Test
-    public void testConvertWithCourtAddress() {
-        when(courtDO.getCourtAddress()).thenReturn("123 Test");
+    public void testConvertWithCourtAddressStreet() {
+        when(courtDO.getAddressStreet()).thenReturn("123 Test");
         Court court = testConverter.convert(courtDO);
-        assertEquals("123 Test", court.getCourtAddress());
+        assertEquals("123 Test", court.getAddressStreet());
     }
 
     @Test
-    public void testConvertWithCourtPhone() {
-        when(courtDO.getCourtPhone()).thenReturn("123456");
+    public void testConvertWithCourtAddressWard() {
+        when(courtDO.getAddressWard()).thenReturn("Phuong 15");
         Court court = testConverter.convert(courtDO);
-        assertEquals("123456", court.getCourtPhone());
+        assertEquals("Phuong 15", court.getAddressWard());
+    }
+
+    @Test
+    public void testConvertWithCourtAddressDistrict() {
+        when(courtDO.getAddressDistrict()).thenReturn("Quan 1");
+        Court court = testConverter.convert(courtDO);
+        assertEquals("Quan 1", court.getAddressDistrict());
+    }
+
+    @Test
+    public void testConvertWithCourtAddressCity() {
+        when(courtDO.getAddressCity()).thenReturn("TP Ho Chi Minh");
+        Court court = testConverter.convert(courtDO);
+        assertEquals("TP Ho Chi Minh", court.getAddressCity());
+    }
+
+    @Test
+    public void testConvertWithCourtAddressCountry() {
+        when(courtDO.getAddressCountry()).thenReturn("VN");
+        Court court = testConverter.convert(courtDO);
+        assertEquals("VN", court.getAddressCountry());
+    }
+
+    @Test
+    public void testConvertWithCourtPhoneNumber() {
+        when(courtDO.getPhoneNumber()).thenReturn("123456");
+        Court court = testConverter.convert(courtDO);
+        assertEquals("123456", court.getPhoneNumber());
     }
 
     @Test

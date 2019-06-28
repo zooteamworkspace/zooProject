@@ -23,13 +23,25 @@ public class CourtDO {
     private Long id;
 
     @Column
-    private String courtName;
+    private String name;
 
     @Column
-    private String courtAddress;
+    private String addressStreet;
 
     @Column
-    private String courtPhone;
+    private String addressWard;
+
+    @Column
+    private String addressDistrict;
+
+    @Column
+    private String addressCity;
+
+    @Column
+    private String addressCountry;
+
+    @Column
+    private String phoneNumber;
 
     @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)

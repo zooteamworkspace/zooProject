@@ -1,6 +1,6 @@
 package com.zoo.zooApplication.dao.model;
 
-import com.zoo.zooApplication.dao.util.CommaSeparatedStringAttributeConverter;
+import com.zoo.zooApplication.dao.util.IdListToStringAttributeConverter;
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,14 +24,14 @@ public class FieldDO {
     private Long id;
 
     @Column
-    private String fieldName;
+    private String name;
 
     @Column
     private String fieldType;
 
     @Column
-    @Convert(converter = CommaSeparatedStringAttributeConverter.class)
-    private List<String> subFieldIds;
+    @Convert(converter = IdListToStringAttributeConverter.class)
+    private List<Long> subFieldIds;
 
     @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)

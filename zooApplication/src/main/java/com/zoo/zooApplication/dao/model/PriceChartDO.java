@@ -19,16 +19,6 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 public class PriceChartDO {
 
-    public enum DayOfWeek{
-        MON,
-        TUE,
-        WED,
-        THU,
-        FRI,
-        SAT,
-        SUN
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

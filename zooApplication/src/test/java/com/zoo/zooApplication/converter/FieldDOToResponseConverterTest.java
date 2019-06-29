@@ -37,9 +37,9 @@ public class FieldDOToResponseConverterTest {
 
     @Test
     public void testConvertWithFieldName() {
-        when(fieldDO.getName()).thenReturn("name");
+        when(fieldDO.getFieldName()).thenReturn("name");
         Field field = testConverter.convert(fieldDO);
-        assertEquals("name", field.getName());
+        assertEquals("name", field.getFieldName());
     }
 
     @Test
@@ -51,9 +51,9 @@ public class FieldDOToResponseConverterTest {
 
     @Test
     public void testConvertWithSubFieldIds() {
-        when(fieldDO.getSubFieldIds()).thenReturn(Arrays.asList(123L, 456L));
+        when(fieldDO.getSubFieldIds()).thenReturn(Arrays.asList("1", "2"));
         Field field = testConverter.convert(fieldDO);
-        assertEquals(Arrays.asList(123L, 456L), field.getSubFieldIds());
+        assertEquals(Arrays.asList("1", "2"), field.getSubFieldIds());
     }
 
 }

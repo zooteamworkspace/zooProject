@@ -23,25 +23,13 @@ public class CourtDO {
     private Long id;
 
     @Column
-    private String name;
+    private String courtName;
 
     @Column
-    private String addressStreet;
+    private String courtAddress;
 
     @Column
-    private String addressWard;
-
-    @Column
-    private String addressDistrict;
-
-    @Column
-    private String addressCity;
-
-    @Column
-    private String addressCountry;
-
-    @Column
-    private String phoneNumber;
+    private String courtPhone;
 
     @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
@@ -62,5 +50,13 @@ public class CourtDO {
         return this;
     }
 
+    @OneToMany(targetEntity = FieldTypeDO.class, fetch = FetchType.EAGER,
+    cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
+    private final List<FieldTypeDO> fieldTypes = new ArrayList<>();
 
+    public CourtDO addFieldType(FieldTypeDO fieldTypeDO){
+        fieldTypes.add(fieldTypeDO);
+        fieldTypeDO.setCourt(this);
+        return this;
+    }
 }

@@ -3,6 +3,7 @@ package com.zoo.zooApplication.converter;
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.response.FieldType;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -17,10 +18,13 @@ import java.util.stream.Collectors;
 public class CourtDOToResponseConverter {
 
     private FieldDOToResponseConverter fieldDOToResponseConverter;
+    private FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter;
 
     @Inject
-    public CourtDOToResponseConverter(FieldDOToResponseConverter fieldDOToResponseConverter) {
+    public CourtDOToResponseConverter(FieldDOToResponseConverter fieldDOToResponseConverter,
+                                      FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter) {
         this.fieldDOToResponseConverter = fieldDOToResponseConverter;
+        this.fieldTypeDOToResponseConverter = fieldTypeDOToResponseConverter;
     }
 
     public Court convert(@NotNull final CourtDO courtDO) {
@@ -28,14 +32,11 @@ public class CourtDOToResponseConverter {
         return Court
                 .builder()
                 .id(courtDO.getId())
-                .name(courtDO.getName())
-                .addressStreet(courtDO.getAddressStreet())
-                .addressWard(courtDO.getAddressWard())
-                .addressDistrict(courtDO.getAddressDistrict())
-                .addressCity(courtDO.getAddressCity())
-                .addressCountry(courtDO.getAddressCountry())
-                .phoneNumber(courtDO.getPhoneNumber())
+                .courtName(courtDO.getCourtName())
+                .courtAddress(courtDO.getCourtAddress())
+                .courtPhone(courtDO.getCourtPhone())
                 .fields(convertFields(courtDO))
+                .fieldTypes(convertFieldTypes(courtDO))
                 .build();
     }
 
@@ -50,4 +51,14 @@ public class CourtDOToResponseConverter {
         return Collections.emptyList();
     }
 
+    private List<FieldType> convertFieldTypes(CourtDO courtDO) {
+        if (CollectionUtils.isNotEmpty(courtDO.getFieldTypes())) {
+            return courtDO
+                    .getFieldTypes()
+                    .stream()
+                    .map(fieldTypeDOToResponseConverter::convert)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
 }

@@ -14,11 +14,11 @@ import java.util.List;
 @ApiModel(value = "FieldRequest", description = "The field info to add to court")
 public class FieldRequest {
     @ApiModelProperty(value = "The field name")
-    private String name;
+    private String fieldName;
 
     @ApiModelProperty(value = "The field type")
     private String fieldType;
 
     @ApiModelProperty(value = "The list of field ids that make up this field")
-    private List<Long> subFieldIds;
+    private List<String> subFieldIds;
 }

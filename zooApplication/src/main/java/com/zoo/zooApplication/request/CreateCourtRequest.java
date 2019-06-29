@@ -13,21 +13,12 @@ import lombok.Setter;
 public class CreateCourtRequest {
 
     @ApiModelProperty(value = "Business name of the court")
-    private String name;
+    private String courtName;
 
-    @ApiModelProperty(value = "Business address of the court, street part")
-    private String addressStreet;
-
-    @ApiModelProperty(value = "Business address of the court, ward part")
-    private String addressWard;
-
-    @ApiModelProperty(value = "Business address of the court, district part")
-    private String addressDistrict;
-
-    @ApiModelProperty(value = "Business address of the court, city part")
-    private String addressCity;
+    @ApiModelProperty(value = "Business address of the court")
+    private String courtAddress;
 
     @ApiModelProperty(value = "Business phone number of the court")
-    private String phoneNumber;
+    private String courtPhone;
 
 }

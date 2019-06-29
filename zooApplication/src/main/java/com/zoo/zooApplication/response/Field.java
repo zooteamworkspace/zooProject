@@ -20,13 +20,13 @@ public class Field {
     private long id;
 
     @ApiModelProperty(value = "The field name if available", readOnly = true)
-    private String name;
+    private String fieldName;
 
     @ApiModelProperty(value = "The field type", readOnly = true)
     private String fieldType;
 
     @ApiModelProperty(value = "The list of field id that combine to this field, if this list is present mean that this field is not a unit field ", readOnly = true)
-    private List<Long> subFieldIds;
+    private List<String> subFieldIds;
 
 
 }

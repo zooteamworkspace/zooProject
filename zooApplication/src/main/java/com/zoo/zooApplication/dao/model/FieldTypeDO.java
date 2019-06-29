@@ -1,37 +1,36 @@
 package com.zoo.zooApplication.dao.model;
 
-import com.zoo.zooApplication.dao.util.CommaSeparatedStringAttributeConverter;
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
+import com.zoo.zooApplication.util.EnumCollections.MainFieldType;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "fields")
+@Table(name="field_types")
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor // require for @Builder to work correctly
-@NoArgsConstructor // required for hibernate mapping
-public class FieldDO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class FieldTypeDO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String fieldName;
+    @Enumerated(EnumType.ORDINAL)
+    @Column(nullable = false,columnDefinition = "main_field_type")
+    private MainFieldType fieldType;
 
     @Column
-    private String fieldType;
-
-    @Column
-    @Convert(converter = CommaSeparatedStringAttributeConverter.class)
-    private List<String> subFieldIds;
+    private String fieldTypeName;
 
     @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
@@ -47,4 +46,13 @@ public class FieldDO {
     @JoinColumn(name = "court_id")
     private CourtDO court;
 
+    @OneToMany(targetEntity = PriceChartDO.class, fetch = FetchType.EAGER,
+    cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "fieldType")
+    private final List<PriceChartDO> priceCharts = new ArrayList<>();
+
+    public FieldTypeDO addPriceChart(PriceChartDO priceChartDO){
+        priceCharts.add(priceChartDO);
+        priceChartDO.setFieldType(this);
+        return this;
+    }
 }

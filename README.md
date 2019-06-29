@@ -33,7 +33,3 @@ Please refer to this instruction for installation and testing of the project to 
 - Let's use branch work flow, branch out, PR review then merge.
 - Try to add unit test for all code added.
 - As start, it is ok to stub and leave code empty and still PR, but put TODO or TASK or FIXME to mark work need to be done.
-
-## Design Documents:
-
-- https://dbdiagram.io/d/5d13054e37c1673299db1a95

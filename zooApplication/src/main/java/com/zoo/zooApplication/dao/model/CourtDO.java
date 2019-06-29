@@ -3,6 +3,8 @@ package com.zoo.zooApplication.dao.model;
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -53,7 +55,8 @@ public class CourtDO {
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
 
-    @OneToMany(targetEntity = FieldDO.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(targetEntity = FieldDO.class, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
     private final List<FieldDO> fields = new ArrayList<>();
 
     public CourtDO addField(FieldDO fieldDO) {
@@ -62,7 +65,8 @@ public class CourtDO {
         return this;
     }
 
-    @OneToMany(targetEntity = FieldTypeDO.class, fetch = FetchType.EAGER,
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(targetEntity = FieldTypeDO.class,
     cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
     private final List<FieldTypeDO> fieldTypes = new ArrayList<>();
 

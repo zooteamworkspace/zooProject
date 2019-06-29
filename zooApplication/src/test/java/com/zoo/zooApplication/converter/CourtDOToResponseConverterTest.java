@@ -2,8 +2,10 @@ package com.zoo.zooApplication.converter;
 
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
+import com.zoo.zooApplication.dao.model.PriceChartDO;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.response.PriceChart;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,10 +24,13 @@ public class CourtDOToResponseConverterTest {
 
     private FieldDOToResponseConverter fieldDOToResponseConverter;
 
+    private PriceChartDOToResponseConverter priceChartDOToResponseConverter;
+
     @Before
     public void setUp() {
         fieldDOToResponseConverter = mock(FieldDOToResponseConverter.class);
-        testConverter = new CourtDOToResponseConverter(fieldDOToResponseConverter);
+        priceChartDOToResponseConverter = mock(PriceChartDOToResponseConverter.class);
+        testConverter = new CourtDOToResponseConverter(fieldDOToResponseConverter,priceChartDOToResponseConverter);
         courtDO = mock(CourtDO.class);
     }
 
@@ -115,4 +120,28 @@ public class CourtDOToResponseConverterTest {
         assertEquals(expectList, court.getFields());
     }
 
+    @Test
+    public void testConvertWithEmptyPriceChart(){
+        when(courtDO.getPriceCharts()).thenReturn(new ArrayList<>());
+        Court court = testConverter.convert(courtDO);
+        assertTrue(court.getPriceCharts().isEmpty());
+    }
+
+    @Test
+    public void testConvertWithPriceCharts(){
+        List<PriceChartDO> mockList = new ArrayList<>();
+        mockList.add(mock(PriceChartDO.class));
+        mockList.add(mock(PriceChartDO.class));
+
+        List<PriceChart> expectList = new ArrayList<>();
+        expectList.add(mock(PriceChart.class));
+        expectList.add(mock(PriceChart.class));
+
+        when(priceChartDOToResponseConverter.convert(mockList.get(0))).thenReturn(expectList.get(0));
+        when(priceChartDOToResponseConverter.convert(mockList.get(1))).thenReturn(expectList.get(1));
+        when(courtDO.getPriceCharts()).thenReturn(mockList);
+
+        Court court = testConverter.convert(courtDO);
+        assertEquals(expectList, court.getPriceCharts());
+    }
 }

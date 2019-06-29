@@ -62,5 +62,13 @@ public class CourtDO {
         return this;
     }
 
+    @OneToMany(targetEntity = FieldTypeDO.class, fetch = FetchType.EAGER,
+    cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
+    private final List<FieldTypeDO> fieldTypes = new ArrayList<>();
 
+    public CourtDO addFieldType(FieldTypeDO fieldTypeDO){
+        fieldTypes.add(fieldTypeDO);
+        fieldTypeDO.setCourt(this);
+        return this;
+    }
 }

@@ -2,7 +2,10 @@ package com.zoo.zooApplication.resource;
 
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
+import com.zoo.zooApplication.request.CreateFieldTypeRequest;
+import com.zoo.zooApplication.request.CreatePriceChartRequest;
 import com.zoo.zooApplication.response.Court;
+import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -81,4 +84,23 @@ public class CourtManagementResource {
         return courtAndFieldService.findCourtByFieldId(fieldId);
     }
 
+    @ApiOperation(value = "add a new field type price to the court", response = Court.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the field price type to court")})
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/{courtId}/fieldTypes")
+    public Court addFieldTypeToCourt(@PathParam("courtId") String courtId,
+                                     CreateFieldTypeRequest createFieldTypeRequest){
+        return courtAndFieldService.addFieldTypeToCourt(courtId, createFieldTypeRequest);
+    }
+
+    @ApiOperation(value = "add a price chart to specific field type", response = Court.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the price chart to specific field type")})
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/fieldTypes/{fieldTypeId}/priceCharts")
+    public FieldType addPriceChartToFieldType(@PathParam("fieldTypeId") String fieldTypeId,
+                                              CreatePriceChartRequest createPriceChartRequest){
+        return courtAndFieldService.addPriceChartToFieldType(fieldTypeId, createPriceChartRequest);
+    }
 }

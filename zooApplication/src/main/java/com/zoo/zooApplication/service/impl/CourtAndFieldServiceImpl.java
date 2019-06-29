@@ -1,20 +1,27 @@
 package com.zoo.zooApplication.service.impl;
 
 import com.zoo.zooApplication.converter.CourtDOToResponseConverter;
+import com.zoo.zooApplication.converter.FieldDOToResponseConverter;
+import com.zoo.zooApplication.converter.FieldTypeDOToResponseConverter;
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
+import com.zoo.zooApplication.dao.model.FieldTypeDO;
+import com.zoo.zooApplication.dao.model.PriceChartDO;
 import com.zoo.zooApplication.dao.repository.CourtRepository;
 import com.zoo.zooApplication.dao.repository.FieldRepository;
-import com.zoo.zooApplication.request.CreateCourtRequest;
-import com.zoo.zooApplication.request.CreateFieldRequest;
-import com.zoo.zooApplication.request.FieldRequest;
+import com.zoo.zooApplication.dao.repository.FieldTypeRepository;
+import com.zoo.zooApplication.dao.repository.PriceChartRepository;
+import com.zoo.zooApplication.request.*;
 import com.zoo.zooApplication.response.Court;
+import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
+import com.zoo.zooApplication.util.DateTimeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,13 +33,24 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 
     private FieldRepository fieldRepository;
 
+    private FieldTypeRepository fieldTypeRepository;
+
+    private PriceChartRepository priceChartRepository;
+
     private CourtDOToResponseConverter courtDOToResponseConverter;
 
+    private FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter;
+
     @Inject
-    public CourtAndFieldServiceImpl(CourtRepository courtRepository, FieldRepository fieldRepository, CourtDOToResponseConverter courtDOToResponseConverter) {
+    public CourtAndFieldServiceImpl(CourtRepository courtRepository, FieldRepository fieldRepository,
+                                    FieldTypeRepository fieldTypeRepository, PriceChartRepository priceChartRepository,
+                                    CourtDOToResponseConverter courtDOToResponseConverter, FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter) {
         this.courtRepository = courtRepository;
         this.fieldRepository = fieldRepository;
         this.courtDOToResponseConverter = courtDOToResponseConverter;
+        this.fieldTypeRepository = fieldTypeRepository;
+        this.priceChartRepository = priceChartRepository;
+        this.fieldTypeDOToResponseConverter = fieldTypeDOToResponseConverter;
     }
 
     @Override
@@ -94,5 +112,57 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
                     .forEach(fieldDO -> courtDO.addField(fieldDO));
         }
         return courtDO;
+    }
+
+    @Override
+    public Court addFieldTypeToCourt(String courtId, CreateFieldTypeRequest createFieldTypeRequest){
+        Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
+
+        return court
+                .map(courtDO -> addFieldTypeDO(courtDO,createFieldTypeRequest.getFieldTypeRequestList()))
+                .map(courtRepository::save)
+                .map(courtDOToResponseConverter::convert)
+                .orElse(null);
+    }
+
+    private CourtDO addFieldTypeDO(CourtDO courtDO, List<FieldTypeRequest> fieldTypeRequests) {
+        if (CollectionUtils.isNotEmpty(fieldTypeRequests)) {
+            fieldTypeRequests
+                    .stream()
+                    .map(request -> FieldTypeDO
+                            .builder()
+                            .fieldType(request.getMainType())
+                            .fieldTypeName(request.getFieldTypeName())
+                            .build())
+                    .forEach(fieldTypeDO -> courtDO.addFieldType(fieldTypeDO));
+        }
+        return courtDO;
+    }
+
+//    TODO
+    @Override
+    public FieldType addPriceChartToFieldType(String fieldTypeId, CreatePriceChartRequest createPriceChartRequest){
+        Optional<FieldTypeDO> fieldType = fieldTypeRepository.findById(NumberUtils.toLong(fieldTypeId));
+
+        return fieldType
+                .map(fieldTypeDO -> addPriceChartDO(fieldTypeDO,createPriceChartRequest.getPriceChartRequests()))
+                .map(fieldTypeRepository::save)
+                .map(fieldTypeDOToResponseConverter::convert)
+                .orElse(null);
+    }
+
+    private FieldTypeDO addPriceChartDO(FieldTypeDO fieldTypeDO, List<PriceChartRequest> priceChartRequest) {
+        if (CollectionUtils.isNotEmpty(priceChartRequest)) {
+            priceChartRequest
+                    .stream()
+                    .map(request -> PriceChartDO
+                            .builder()
+                            .priceAmount(request.getPriceAmount())
+                            .timeStart(DateTimeUtil.parseISO8601TimeFormat(request.getTimeStart()))
+                            .timeEnd(DateTimeUtil.parseISO8601TimeFormat(request.getTimeEnd()))
+                            .build())
+                    .forEach(priceChartDO -> fieldTypeDO.addPriceChart(priceChartDO));
+        }
+        return fieldTypeDO;
     }
 }

@@ -28,7 +28,7 @@ public class FieldTypeDOToResponseConverter {
         return FieldType
                 .builder()
                 .id(fieldTypeDO.getId())
-                .mainType(fieldTypeDO.getFieldType())
+                .mainType(fieldTypeDO.getFieldType().getId())
                 .priceCharts(convertPriceCharts(fieldTypeDO))
                 .build();
     }

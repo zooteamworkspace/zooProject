@@ -2,7 +2,6 @@ package com.zoo.zooApplication.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.zoo.zooApplication.util.EnumCollections.MainFieldType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -21,7 +20,7 @@ public class FieldType {
     private long id;
 
     @ApiModelProperty(value = "The main field type - 5 7 11", readOnly = true)
-    private MainFieldType mainType;
+    private int mainType;
 
     @ApiModelProperty(value = "The court ID matchs with this owner", readOnly = true)
     private long courtId;

@@ -1,7 +1,7 @@
 package com.zoo.zooApplication.dao.model;
 
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
-import com.zoo.zooApplication.util.EnumCollections.DayOfWeek;
+import com.zoo.zooApplication.type.DayOfWeekEnum;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -25,7 +25,7 @@ public class PriceChartDO {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false,columnDefinition = "day_of_week")
-    private DayOfWeek day;
+    private DayOfWeekEnum day;
 
     @Column
     private Double priceAmount;

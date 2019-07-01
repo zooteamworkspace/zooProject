@@ -2,7 +2,6 @@ package com.zoo.zooApplication.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.zoo.zooApplication.util.EnumCollections.DayOfWeek;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -25,7 +24,7 @@ public class PriceChart {
     private Double priceAmount;
 
     @ApiModelProperty(value = "The price type of selected price", readOnly = true)
-    private DayOfWeek day;
+    private int day;
 
     @ApiModelProperty(value = "The starting time of selected price", readOnly = true)
     private String timeStart;

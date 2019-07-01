@@ -1,13 +1,12 @@
 package com.zoo.zooApplication.dao.model;
 
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
-import com.zoo.zooApplication.util.EnumCollections.MainFieldType;
+
+import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import javax.persistence.*;
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +26,7 @@ public class FieldTypeDO {
 
     @Enumerated(EnumType.ORDINAL)
     @Column(nullable = false,columnDefinition = "main_field_type")
-    private MainFieldType fieldType;
+    private MainFieldTypeEnum fieldType;
 
     @Column
     private String fieldTypeName;

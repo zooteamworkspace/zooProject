@@ -1,0 +1,15 @@
+image: maven:latest
+
+build:
+  stage: build
+  script:
+    - mvn compile
+  only:
+    - master
+    
+test:
+  stage: test
+  script:
+    - mvn $MAVEN_CLI_OPTS test
+  only:
+    - master

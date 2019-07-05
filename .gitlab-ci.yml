@@ -3,6 +3,7 @@ image: maven:latest
 build:
   stage: build
   script:
+    - cd zooApplication
     - mvn compile
   only:
     - master
@@ -10,6 +11,7 @@ build:
 test:
   stage: test
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - cd zooApplication
+    - mvn test
   only:
     - master

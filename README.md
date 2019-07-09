@@ -12,18 +12,23 @@ Please refer to this instruction for installation and testing of the project to 
 ## Installation Instruction
 
 1. git clone https://github.com/nhatnguyen26/zooProject.git
-2. install postgresql:
-    - For mac: use home brew: `brew update` -> `brew install postgresql@10`
+2. install postgresql (using Terminal):
+    - For mac: use home brew: 
+        - `brew update` 
+        - `brew install postgresql@10`
     - Follow step to initdb:
-        - createdb zoodb
-        - psql zoodb
-        - create user zoodb;
-        - alter user zoodb with encrypted password 'ZooDBPassword';
-        - grant all privileges on database zoodb to zoodb;
+        - `createdb zoodb`
+        - `psql zoodb`
+        - `create user zoodb;`
+        - `alter user zoodb with encrypted password 'ZooDBPassword';`
+        - `grant all privileges on database zoodb to zoodb;`
+        - `\q` to exit psql console
+        - `cd dbScripts`
+        - `ls | xargs -n 1 psql -d zoodb -f` this will init all the starting tables
 3. Initial test to make sure set up work: 
-    - Run `com.zoo.bookingService.application.BookingServiceApplication`
-    - In Postman: GET http://localhost:8080/bookingService/v1/bookings/version -> if get "0.0.1" mean server start successfully
-4. Testing using Swagger: http://localhost:8080/swagger/index.html
+    - Run `com.zoo.bookingService.application.BookingServiceApplication` if using Eclipse or IntelliJ
+    - In terminal, can use `mvnw clean install springboot:run` server should start
+4. Testing using Swagger: `http://localhost:8080/swagger/index.html` and test using UI
 
 ## Working convention:
 

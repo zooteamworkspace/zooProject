@@ -6,7 +6,7 @@ Please refer to this instruction for installation and testing of the project to 
 ## Develop environment requirement:
 
 - Most project will be on JDK 11 at version 11.0.2.
-- Database version will be Postgresql 10
+- Database version will be Postgresql 11
 - Install Postman to test the APIs (or built-in Swagger)
 
 ## Installation Instruction
@@ -15,7 +15,7 @@ Please refer to this instruction for installation and testing of the project to 
 2. install postgresql (using Terminal):
     - For mac: use home brew: 
         - `brew update` 
-        - `brew install postgresql@10`
+        - `brew install postgresql`
     - Follow step to initdb:
         - `createdb zoodb`
         - `psql zoodb`

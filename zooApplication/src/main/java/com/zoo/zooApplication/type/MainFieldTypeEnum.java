@@ -22,6 +22,15 @@ public enum MainFieldTypeEnum {
         this.allowCombine = allowCombine;
     }
 
+    public static MainFieldTypeEnum getById(int id) {
+        for (MainFieldTypeEnum mainFieldTypeEnum : values()) {
+            if (mainFieldTypeEnum.getId() == id) {
+                return mainFieldTypeEnum;
+            }
+        }
+        throw new IllegalArgumentException("Invalid Id: " + id);
+    }
+
     public int getId() {
         return id;
     }

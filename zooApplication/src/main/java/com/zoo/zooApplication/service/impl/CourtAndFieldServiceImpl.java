@@ -15,6 +15,7 @@ import com.zoo.zooApplication.request.*;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
+import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import com.zoo.zooApplication.util.DateTimeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -131,7 +132,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
                     .stream()
                     .map(request -> FieldTypeDO
                             .builder()
-                            .fieldType(request.getMainType())
+                            .fieldType(MainFieldTypeEnum.getById(request.getMainType()))
                             .fieldTypeName(request.getFieldTypeName())
                             .build())
                     .forEach(fieldTypeDO -> courtDO.addFieldType(fieldTypeDO));

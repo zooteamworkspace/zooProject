@@ -39,7 +39,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
         BeanConfig config = new BeanConfig();
         config.setTitle("Backend service for zoo application");
         config.setVersion("v1");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[]{"http", "https"});
         config.setBasePath("/zooApplication/");
         config.setResourcePackage("com.zoo.zooApplication.resource");
         config.setPrettyPrint(true);

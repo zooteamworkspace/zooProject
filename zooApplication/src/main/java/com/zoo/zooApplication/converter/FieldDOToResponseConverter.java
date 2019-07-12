@@ -16,7 +16,7 @@ public class FieldDOToResponseConverter {
                 .builder()
                 .id(fieldDO.getId())
                 .name(fieldDO.getName())
-                .fieldType(fieldDO.getFieldType())
+                .fieldTypeId(fieldDO.getFieldTypeId())
                 .subFieldIds(fieldDO.getSubFieldIds())
                 .build();
     }

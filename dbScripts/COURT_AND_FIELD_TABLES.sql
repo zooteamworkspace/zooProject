@@ -27,7 +27,7 @@ CREATE TABLE FIELDS (
 
 CREATE TABLE FIELD_TYPES (
     id SERIAL PRIMARY KEY,
-    main_type INT,
+    main_field_type INT,
     court_id INT,
     name VARCHAR(20),
     created_at BIGINT NOT NULL,

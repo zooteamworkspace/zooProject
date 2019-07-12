@@ -27,7 +27,7 @@ public class FieldDO {
     private String name;
 
     @Column
-    private String fieldType;
+    private Long fieldTypeId;
 
     @Column
     @Convert(converter = IdListToStringAttributeConverter.class)

@@ -2,17 +2,18 @@ package com.zoo.zooApplication.converter;
 
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
-import com.zoo.zooApplication.dao.model.PriceChartDO;
+import com.zoo.zooApplication.dao.model.FieldTypeDO;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.Field;
-import com.zoo.zooApplication.response.PriceChart;
+import com.zoo.zooApplication.response.FieldType;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -30,7 +31,7 @@ public class CourtDOToResponseConverterTest {
     public void setUp() {
         fieldDOToResponseConverter = mock(FieldDOToResponseConverter.class);
         fieldTypeDOToResponseConverter = mock(FieldTypeDOToResponseConverter.class);
-        testConverter = new CourtDOToResponseConverter(fieldDOToResponseConverter,fieldTypeDOToResponseConverter);
+        testConverter = new CourtDOToResponseConverter(fieldDOToResponseConverter, fieldTypeDOToResponseConverter);
         courtDO = mock(CourtDO.class);
     }
 
@@ -119,7 +120,8 @@ public class CourtDOToResponseConverterTest {
         Court court = testConverter.convert(courtDO);
         assertEquals(expectList, court.getFields());
     }
-//TODO
+
+    //TODO
 //    @Test
 //    public void testConvertWithEmptyPriceChart(){
 //        when(courtDO.getPriceCharts()).thenReturn(new ArrayList<>());
@@ -144,4 +146,30 @@ public class CourtDOToResponseConverterTest {
 //        Court court = testConverter.convert(courtDO);
 //        assertEquals(expectList, court.getPriceCharts());
 //    }
+
+    @Test
+    public void testConvertWithEmptyFieldType() {
+        when(courtDO.getFields()).thenReturn(new ArrayList<>());
+        Court court = testConverter.convert(courtDO);
+        assertTrue(court.getFieldTypes().isEmpty());
+    }
+
+    @Test
+    public void testConvertWithSomeFieldTypes() {
+        List<FieldTypeDO> mockList = new ArrayList<>();
+        mockList.add(mock(FieldTypeDO.class));
+        mockList.add(mock(FieldTypeDO.class));
+
+        List<FieldType> expectList = new ArrayList<>();
+        expectList.add(mock(FieldType.class));
+        expectList.add(mock(FieldType.class));
+
+        when(fieldTypeDOToResponseConverter.convert(mockList.get(0))).thenReturn(expectList.get(0));
+        when(fieldTypeDOToResponseConverter.convert(mockList.get(1))).thenReturn(expectList.get(1));
+
+        when(courtDO.getFieldTypes()).thenReturn(mockList);
+        Court court = testConverter.convert(courtDO);
+        assertEquals(expectList, court.getFieldTypes());
+    }
+
 }

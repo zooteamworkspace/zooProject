@@ -1,7 +1,6 @@
 package com.zoo.zooApplication.service.impl;
 
 import com.zoo.zooApplication.converter.CourtDOToResponseConverter;
-import com.zoo.zooApplication.converter.FieldDOToResponseConverter;
 import com.zoo.zooApplication.converter.FieldTypeDOToResponseConverter;
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
@@ -15,14 +14,12 @@ import com.zoo.zooApplication.request.*;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
-import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import com.zoo.zooApplication.util.DateTimeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -107,7 +104,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
                     .map(request -> FieldDO
                             .builder()
                             .name(request.getName())
-                            .fieldType(request.getFieldType())
+                            .fieldTypeId(request.getFieldTypeId())
                             .subFieldIds(request.getSubFieldIds())
                             .build())
                     .forEach(fieldDO -> courtDO.addField(fieldDO));
@@ -132,8 +129,8 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
                     .stream()
                     .map(request -> FieldTypeDO
                             .builder()
-                            .fieldType(MainFieldTypeEnum.getById(request.getMainType()))
-                            .fieldTypeName(request.getFieldTypeName())
+                            //.fieldType(MainFieldTypeEnum.getById(request.getMainType()))
+                            .name(request.getFieldTypeName())
                             .build())
                     .forEach(fieldTypeDO -> courtDO.addFieldType(fieldTypeDO));
         }

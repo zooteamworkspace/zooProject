@@ -43,6 +43,6 @@ public class Court {
     @ApiModelProperty(value = "The all the field belong to this court", readOnly = true)
     private List<Field> fields;
 
-    @ApiModelProperty(value = "All the price charts belong to this court", readOnly = true)
+    @ApiModelProperty(value = "The all the field type belong to this court and price chart belong to this type", readOnly = true)
     private List<FieldType> fieldTypes;
 }

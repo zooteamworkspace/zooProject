@@ -1,7 +1,10 @@
 package com.zoo.zooApplication.dao.model;
 
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -66,8 +69,7 @@ public class CourtDO {
     }
 
     @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(targetEntity = FieldTypeDO.class,
-    cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
+    @OneToMany(targetEntity = FieldTypeDO.class, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
     private final List<FieldTypeDO> fieldTypes = new ArrayList<>();
 
     public CourtDO addFieldType(FieldTypeDO fieldTypeDO){

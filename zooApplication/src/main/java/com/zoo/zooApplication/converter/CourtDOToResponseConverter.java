@@ -20,6 +20,7 @@ public class CourtDOToResponseConverter {
     private FieldDOToResponseConverter fieldDOToResponseConverter;
     private FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter;
 
+
     @Inject
     public CourtDOToResponseConverter(FieldDOToResponseConverter fieldDOToResponseConverter,
                                       FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter) {

@@ -2,9 +2,9 @@ package com.zoo.zooApplication.type;
 
 public enum MainFieldTypeEnum {
 
-    SOCCER_5(0, "SOCCER", false),
-    SOCCER_7(1, "SOCCER", true),
-    SOCCER_11(2, "SOCCER", true);
+    SOCCER_5(1, "SOCCER", false),
+    SOCCER_7(2, "SOCCER", true),
+    SOCCER_11(3, "SOCCER", true);
 
     // id for enum
     private int id;
@@ -22,13 +22,15 @@ public enum MainFieldTypeEnum {
         this.allowCombine = allowCombine;
     }
 
-    public static MainFieldTypeEnum getById(int id) {
-        for (MainFieldTypeEnum mainFieldTypeEnum : values()) {
-            if (mainFieldTypeEnum.getId() == id) {
-                return mainFieldTypeEnum;
+    public static MainFieldTypeEnum getFromId(Integer dbData) {
+        if (dbData != null) {
+            for (MainFieldTypeEnum value : values()) {
+                if (value.getId() == dbData.intValue()) {
+                    return value;
+                }
             }
         }
-        throw new IllegalArgumentException("Invalid Id: " + id);
+        return null;
     }
 
     public int getId() {

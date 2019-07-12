@@ -43,10 +43,10 @@ public class FieldDOToResponseConverterTest {
     }
 
     @Test
-    public void testConvertWithFieldType() {
-        when(fieldDO.getFieldType()).thenReturn("type");
+    public void testConvertWithFieldTypeId() {
+        when(fieldDO.getFieldTypeId()).thenReturn(Long.valueOf(123));
         Field field = testConverter.convert(fieldDO);
-        assertEquals("type", field.getFieldType());
+        assertEquals(123l, field.getFieldTypeId());
     }
 
     @Test

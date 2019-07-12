@@ -195,35 +195,34 @@ public class CourtAndFieldServiceImplTest {
         CreateFieldRequest fieldRequest = new CreateFieldRequest();
         FieldRequest request1 = new FieldRequest();
         request1.setName("testName1");
-        request1.setFieldType("testType1");
+        request1.setFieldTypeId(123L);
 
         FieldRequest request2 = new FieldRequest();
         request2.setName("testName2");
-        request2.setFieldType("testType2");
+        request2.setFieldTypeId(123L);
 
         FieldRequest request3 = new FieldRequest();
         request3.setName("testName3");
-        request3.setFieldType("testType3");
+        request3.setFieldTypeId(456L);
         request3.setSubFieldIds(Arrays.asList(123L, 456L));
 
         fieldRequest.setFieldRequests(Arrays.asList(request1, request2, request3));
 
         CourtDO courtDO = mock(CourtDO.class);
-        ArgumentCaptor<FieldDO> fieldCaptor = ArgumentCaptor.forClass(FieldDO.class);
-        when(courtDO.addField(fieldCaptor.capture())).thenReturn(courtDO);
+        FieldDO mockFieldDO = any(FieldDO.class);
+        when(courtDO.addField(mockFieldDO)).thenReturn(courtDO);
         when(courtRepository.findById(123L)).thenReturn(Optional.of(courtDO));
         when(courtRepository.save(courtDO)).thenReturn(courtDO);
 
         Court response = mock(Court.class);
         when(courtDOToResponseConverter.convert(courtDO)).thenReturn(response);
         assertEquals(response, courtAndFieldService.addFieldToCourt("123", fieldRequest));
+        ArgumentCaptor<FieldDO> fieldCaptor = ArgumentCaptor.forClass(FieldDO.class);
+        verify(courtDO, times(3)).addField(fieldCaptor.capture());
         List<FieldDO> fieldValue = fieldCaptor.getAllValues();
         assertEquals("testName1", fieldValue.get(0).getName());
-        assertEquals("testType1", fieldValue.get(0).getFieldType());
         assertEquals("testName2", fieldValue.get(1).getName());
-        assertEquals("testType2", fieldValue.get(1).getFieldType());
         assertEquals("testName3", fieldValue.get(2).getName());
-        assertEquals("testType3", fieldValue.get(2).getFieldType());
         assertEquals(Arrays.asList(123L, 456L), fieldValue.get(2).getSubFieldIds());
     }
 

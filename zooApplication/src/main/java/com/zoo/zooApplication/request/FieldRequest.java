@@ -16,8 +16,8 @@ public class FieldRequest {
     @ApiModelProperty(value = "The field name")
     private String name;
 
-    @ApiModelProperty(value = "The field type")
-    private String fieldType;
+    @ApiModelProperty(value = "The field type id ")
+    private Long fieldTypeId;
 
     @ApiModelProperty(value = "The list of field ids that make up this field")
     private List<Long> subFieldIds;

@@ -31,7 +31,8 @@ public class FieldTypeDO {
     @Convert(converter = MainFieldTypeEnumConverter.class)
     private MainFieldTypeEnum mainFieldType;
 
-    @Column
+    // name is SQL keyword
+    @Column(name = "field_type_name")
     private String name;
 
     @Column(nullable = false)

@@ -208,9 +208,7 @@ public class CourtAndFieldServiceImplTest {
 
         fieldRequest.setFieldRequests(Arrays.asList(request1, request2, request3));
 
-        CourtDO courtDO = mock(CourtDO.class);
-        FieldDO mockFieldDO = any(FieldDO.class);
-        when(courtDO.addField(mockFieldDO)).thenReturn(courtDO);
+        CourtDO courtDO = spy(CourtDO.builder().build());
         when(courtRepository.findById(123L)).thenReturn(Optional.of(courtDO));
         when(courtRepository.save(courtDO)).thenReturn(courtDO);
 

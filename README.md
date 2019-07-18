@@ -24,7 +24,7 @@ Please refer to this instruction for installation and testing of the project to 
         - `grant all privileges on database zoodb to zoodb;`
         - `\q` to exit psql console
         - `cd dbScripts`
-        - `ls | xargs -n 1 psql -d zoodb -f` this will init all the starting tables
+        - `ls | xargs -n 1 psql -U zoodb -d zoodb -f` this will init all the starting tables
 3. Initial test to make sure set up work: 
     - Run `com.zoo.bookingService.application.BookingServiceApplication` if using Eclipse or IntelliJ
     - In terminal, can use `mvnw clean install springboot:run` server should start

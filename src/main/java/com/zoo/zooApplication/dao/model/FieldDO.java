@@ -23,7 +23,8 @@ public class FieldDO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    // name is SQL keyword
+    @Column(name = "field_name")
     private String name;
 
     @Column

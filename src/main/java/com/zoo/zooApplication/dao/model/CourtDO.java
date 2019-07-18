@@ -27,7 +27,8 @@ public class CourtDO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    // name is SQL keyword
+    @Column(name = "court_name")
     private String name;
 
     @Column

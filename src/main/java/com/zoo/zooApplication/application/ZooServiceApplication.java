@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "com.zoo.zooApplication.configuration")
+@ComponentScan(basePackages = "com.zoo.zooApplication.application.configuration")
 public class ZooServiceApplication {
 
     public static void main(String[] args) {

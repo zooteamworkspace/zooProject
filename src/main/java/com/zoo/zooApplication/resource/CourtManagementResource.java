@@ -1,6 +1,7 @@
 package com.zoo.zooApplication.resource;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.zoo.zooApplication.application.filter.FirebaseAuthentication;
 import com.zoo.zooApplication.firebaseadaptor.IFirebaseAuth;
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
@@ -31,13 +32,6 @@ public class CourtManagementResource {
     @Inject
     public CourtManagementResource(CourtAndFieldService courtAndFieldService) {
         this.courtAndFieldService = courtAndFieldService;
-    }
-
-    private IFirebaseAuth iFirebaseAuth;
-
-    @Context
-    protected void setIFirebaseAuth(IFirebaseAuth iFirebaseAuth) {
-        this.iFirebaseAuth = iFirebaseAuth;
     }
 
     @ApiOperation(value = "get current version", response = String.class)

@@ -18,11 +18,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.annotation.PostConstruct;
@@ -42,6 +40,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
 	public ZooServiceConfiguration() {
 		register(BookingResource.class);
 		register(CourtManagementResource.class);
+		register(FirebaseAuthFilter.class);
 		register(new FirebaseAuthBinder());
 	}
 
@@ -93,19 +92,6 @@ public class ZooServiceConfiguration extends ResourceConfig {
 	@ConditionalOnBean(value = FirebaseApp.class)
 	public FirebaseAuth getFirebaseAuth(@Autowired FirebaseApp firebaseApp) throws IOException {
 		return FirebaseAuth.getInstance(firebaseApp);
-	}
-
-	@Bean
-	@ConditionalOnBean(value = FirebaseAuth.class)
-	public FilterRegistrationBean<FirebaseAuthFilter> getFirebaseAuthFilterFilterRegistrationBean(@Autowired FirebaseAuth firebaseAuth) {
-		FilterRegistrationBean<FirebaseAuthFilter> registrationBean
-			= new FilterRegistrationBean<>();
-
-		registrationBean.setFilter(new FirebaseAuthFilter(firebaseAuth));
-		registrationBean.setOrder(Ordered.LOWEST_PRECEDENCE);
-		registrationBean.addUrlPatterns("/zooApplication/v1/courtManagement/*");
-
-		return registrationBean;
 	}
 
 }

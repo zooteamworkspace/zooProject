@@ -25,6 +25,8 @@ CREATE TABLE FIELDS (
     updated_at BIGINT NOT NULL
 );
 
+CREATE INDEX IX_FIELDS_COURT_ID ON FIELDS(court_id);
+
 CREATE TABLE FIELD_TYPES (
     id SERIAL PRIMARY KEY,
     main_field_type INT,
@@ -34,13 +36,3 @@ CREATE TABLE FIELD_TYPES (
     updated_at BIGINT NOT NULL
 );
 
-
--- no need this line if already run above with zoodb otherwise need
---GRANT ALL PRIVILEGES ON TABLE COURTS TO zoodb;
---GRANT ALL PRIVILEGES ON TABLE courts_id_seq TO zoodb;
---
---GRANT ALL PRIVILEGES ON TABLE FIELDS TO zoodb;
---GRANT ALL PRIVILEGES ON TABLE fields_id_seq TO zoodb;
---
---GRANT ALL PRIVILEGES ON TABLE FIELD_TYPES TO zoodb;
---GRANT ALL PRIVILEGES ON TABLE field_types_id_seq TO zoodb;

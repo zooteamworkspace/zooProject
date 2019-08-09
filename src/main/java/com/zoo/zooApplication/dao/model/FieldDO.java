@@ -4,6 +4,8 @@ import com.zoo.zooApplication.dao.util.IdListToStringAttributeConverter;
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -17,6 +19,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor // require for @Builder to work correctly
 @NoArgsConstructor // required for hibernate mapping
+@DynamicUpdate
+@SelectBeforeUpdate(false)
 public class FieldDO {
 
     @Id
@@ -45,7 +49,7 @@ public class FieldDO {
     private ZonedDateTime updatedAt;
 
     @ManyToOne(targetEntity = CourtDO.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "court_id")
+    @JoinColumn(name = "court_id", updatable = false)
     private CourtDO court;
 
 }

@@ -17,7 +17,7 @@ import java.util.List;
 public class Court {
 
     @ApiModelProperty(value = "The unique identifier of the court", readOnly = true)
-    private long id;
+    private Long id;
 
     @ApiModelProperty(value = "The court name which is also the business name", readOnly = true)
     private String name;

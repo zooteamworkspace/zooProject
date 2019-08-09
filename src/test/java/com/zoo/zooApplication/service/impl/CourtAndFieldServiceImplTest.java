@@ -1,6 +1,7 @@
 package com.zoo.zooApplication.service.impl;
 
 import com.zoo.zooApplication.converter.CourtDOToResponseConverter;
+import com.zoo.zooApplication.converter.FieldDOToResponseConverter;
 import com.zoo.zooApplication.converter.FieldTypeDOToResponseConverter;
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
@@ -12,12 +13,14 @@ import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
 import com.zoo.zooApplication.request.FieldRequest;
 import com.zoo.zooApplication.response.Court;
+import com.zoo.zooApplication.response.Field;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +40,9 @@ public class CourtAndFieldServiceImplTest {
     private CourtDOToResponseConverter courtDOToResponseConverter;
 
     @Mock
+    private FieldDOToResponseConverter fieldDOToResponseConverter;
+
+    @Mock
     private FieldTypeRepository fieldTypeRepository;
 
     @Mock
@@ -50,10 +56,12 @@ public class CourtAndFieldServiceImplTest {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        courtAndFieldService = new CourtAndFieldServiceImpl(courtRepository, fieldRepository,
+		courtAndFieldService = new CourtAndFieldServiceImpl(courtRepository, fieldRepository,
                 fieldTypeRepository,priceChartRepository,
-                courtDOToResponseConverter,fieldTypeDOToResponseConverter);
+                courtDOToResponseConverter, fieldDOToResponseConverter, fieldTypeDOToResponseConverter);
     }
+
+    /* COURT MANAGEMENT TESTS START */
 
     @Test
     public void testCreateCourt() {
@@ -179,16 +187,102 @@ public class CourtAndFieldServiceImplTest {
         assertEquals(response, courtAndFieldService.findCourtById("123"));
     }
 
-    @Test
-    public void testFindCourtByFieldId() {
-        CourtDO mockCourt = mock(CourtDO.class);
-        FieldDO mockField = mock(FieldDO.class);
-        when(mockField.getCourt()).thenReturn(mockCourt);
-        when(fieldRepository.findById(123L)).thenReturn(Optional.of(mockField));
-        Court response = mock(Court.class);
-        when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(response);
-        assertEquals(response, courtAndFieldService.findCourtByFieldId("123"));
-    }
+	@Test
+	public void testEditCourtNotFound() {
+		when(courtRepository.findById(123L)).thenReturn(Optional.empty());
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		assertNull(courtAndFieldService.editCourt("123", mockRequest));
+	}
+
+	@Test
+	public void testEditCourtSetName() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(mockCourt));
+		when(courtRepository.save(mockCourt)).thenReturn(mockCourt);
+		Court response = mock(Court.class);
+		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(response);
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		when(mockRequest.getName()).thenReturn("newName");
+		assertEquals(response, courtAndFieldService.editCourt("123", mockRequest));
+		verify(mockCourt, times(1)).setName("newName");
+		verifyNoMoreInteractions(mockCourt);
+	}
+
+	@Test
+	public void testEditCourtSetStreet() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(mockCourt));
+		when(courtRepository.save(mockCourt)).thenReturn(mockCourt);
+		Court response = mock(Court.class);
+		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(response);
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		when(mockRequest.getAddressStreet()).thenReturn("newStreet");
+		assertEquals(response, courtAndFieldService.editCourt("123", mockRequest));
+		verify(mockCourt, times(1)).setAddressStreet("newStreet");
+		verifyNoMoreInteractions(mockCourt);
+	}
+
+	@Test
+	public void testEditCourtSetWard() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(mockCourt));
+		when(courtRepository.save(mockCourt)).thenReturn(mockCourt);
+		Court response = mock(Court.class);
+		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(response);
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		when(mockRequest.getAddressWard()).thenReturn("newWard");
+		assertEquals(response, courtAndFieldService.editCourt("123", mockRequest));
+		verify(mockCourt, times(1)).setAddressWard("newWard");
+		verifyNoMoreInteractions(mockCourt);
+	}
+
+	@Test
+	public void testEditCourtSetDistrict() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(mockCourt));
+		when(courtRepository.save(mockCourt)).thenReturn(mockCourt);
+		Court response = mock(Court.class);
+		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(response);
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		when(mockRequest.getAddressDistrict()).thenReturn("newDist");
+		assertEquals(response, courtAndFieldService.editCourt("123", mockRequest));
+		verify(mockCourt, times(1)).setAddressDistrict("newDist");
+		verifyNoMoreInteractions(mockCourt);
+	}
+
+	@Test
+	public void testEditCourtSetCity() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(mockCourt));
+		when(courtRepository.save(mockCourt)).thenReturn(mockCourt);
+		Court response = mock(Court.class);
+		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(response);
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		when(mockRequest.getAddressCity()).thenReturn("newCity");
+		assertEquals(response, courtAndFieldService.editCourt("123", mockRequest));
+		verify(mockCourt, times(1)).setAddressCity("newCity");
+		verifyNoMoreInteractions(mockCourt);
+	}
+
+	@Test
+	public void testEditCourtSetPhoneNumber() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(mockCourt));
+		when(courtRepository.save(mockCourt)).thenReturn(mockCourt);
+		Court response = mock(Court.class);
+		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(response);
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		when(mockRequest.getPhoneNumber()).thenReturn("newNumber");
+		assertEquals(response, courtAndFieldService.editCourt("123", mockRequest));
+		verify(mockCourt, times(1)).setPhoneNumber("newNumber");
+		verifyNoMoreInteractions(mockCourt);
+	}
+
+	/* COURT MANAGEMENT TESTS END */
+
+
+
+	/* FIELD MANAGEMENT TESTS START */
 
     @Test
     public void testAddFieldToCourt() {
@@ -221,8 +315,102 @@ public class CourtAndFieldServiceImplTest {
         assertEquals("testName1", fieldValue.get(0).getName());
         assertEquals("testName2", fieldValue.get(1).getName());
         assertEquals("testName3", fieldValue.get(2).getName());
+        assertEquals(Long.valueOf(456), fieldValue.get(2).getFieldTypeId());
         assertEquals(Arrays.asList(123L, 456L), fieldValue.get(2).getSubFieldIds());
     }
 
+    @Test
+	public void testEditFieldCourtNotFound() {
+		when(courtRepository.findById(1L)).thenReturn(Optional.empty());
+		FieldRequest fieldRequest = new FieldRequest();
+		assertNull(courtAndFieldService.editField("1", "1", fieldRequest));
+	}
+
+	@Test
+	public void testEditFieldCourtFoundFieldNotFound() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(mockCourt.findFieldById(1L)).thenReturn(Optional.empty());
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldRequest fieldRequest = new FieldRequest();
+		assertNull(courtAndFieldService.editField("1", "1", fieldRequest));
+	}
+
+	@Test
+	public void testEditFieldName() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldDO mockField = mock(FieldDO.class);
+		when(mockCourt.findFieldById(1L)).thenReturn(Optional.of(mockField));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldRequest fieldRequest = new FieldRequest();
+		fieldRequest.setName("testName");
+		Field expectField = mock(Field.class);
+		when(fieldRepository.save(mockField)).thenReturn(mockField);
+		when(fieldDOToResponseConverter.convert(mockField)).thenReturn(expectField);
+		assertEquals(expectField, courtAndFieldService.editField("1", "1", fieldRequest));
+		verify(mockField, times(1)).setName("testName");
+		verifyNoMoreInteractions(mockField);
+	}
+
+	@Test
+	public void testEditFieldFieldType() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldDO mockField = mock(FieldDO.class);
+		when(mockCourt.findFieldById(1L)).thenReturn(Optional.of(mockField));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldRequest fieldRequest = new FieldRequest();
+		fieldRequest.setFieldTypeId(Long.valueOf(123));
+		Field expectField = mock(Field.class);
+		when(fieldRepository.save(mockField)).thenReturn(mockField);
+		when(fieldDOToResponseConverter.convert(mockField)).thenReturn(expectField);
+		assertEquals(expectField, courtAndFieldService.editField("1", "1", fieldRequest));
+		verify(mockField, times(1)).setFieldTypeId(Long.valueOf(123));
+		verifyNoMoreInteractions(mockField);
+	}
+
+	@Test
+	public void testEditFieldSubField() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldDO mockField = mock(FieldDO.class);
+		when(mockCourt.findFieldById(1L)).thenReturn(Optional.of(mockField));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldRequest fieldRequest = new FieldRequest();
+		fieldRequest.setSubFieldIds(Arrays.asList(Long.valueOf(123), Long.valueOf(121)));
+		Field expectField = mock(Field.class);
+		when(fieldRepository.save(mockField)).thenReturn(mockField);
+		when(fieldDOToResponseConverter.convert(mockField)).thenReturn(expectField);
+		assertEquals(expectField, courtAndFieldService.editField("1", "1", fieldRequest));
+		verify(mockField, times(1)).setSubFieldIds(Arrays.asList(Long.valueOf(123), Long.valueOf(121)));
+		verifyNoMoreInteractions(mockField);
+	}
+
+	@Test
+	public void testDeleteFieldCourtNotFound() {
+		when(courtRepository.findById(1L)).thenReturn(Optional.empty());
+		assertNull(courtAndFieldService.deleteField("1", "1"));
+	}
+
+	@Test
+	public void testDeleteFieldCourtFoundFieldNotFound() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(mockCourt.findFieldById(1L)).thenReturn(Optional.empty());
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		assertNull(courtAndFieldService.deleteField("1", "1"));
+	}
+
+	@Test
+	public void testDeleteFieldNormal() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldDO mockField = mock(FieldDO.class);
+		when(mockField.getId()).thenReturn(Long.valueOf(1));
+		List<FieldDO> fieldList = new ArrayList<>(Arrays.asList(mockField));
+		when(mockCourt.getFields()).thenReturn(fieldList);
+		when(mockCourt.findFieldById(1L)).thenReturn(Optional.of(mockField));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		assertNull(courtAndFieldService.deleteField("1", "1"));
+		verify(courtRepository, times(1)).save(mockCourt);
+		assertTrue(fieldList.isEmpty());
+	}
+
+	/* FIELD MANAGEMENT TESTS END */
 
 }

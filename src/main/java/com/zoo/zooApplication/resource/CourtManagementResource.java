@@ -7,7 +7,9 @@ import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
 import com.zoo.zooApplication.request.CreateFieldTypeRequest;
 import com.zoo.zooApplication.request.CreatePriceChartRequest;
+import com.zoo.zooApplication.request.FieldRequest;
 import com.zoo.zooApplication.response.Court;
+import com.zoo.zooApplication.response.Field;
 import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import io.swagger.annotations.Api;
@@ -60,6 +62,15 @@ public class CourtManagementResource {
                 .build();
     }
 
+    @ApiOperation(value = "edit the information of the court", response = Court.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court edited")})
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/{courtId}")
+    public Court editCourt(@PathParam("courtId") String courtId, @RequestBody CreateCourtRequest createCourtRequest) {
+        return courtAndFieldService.editCourt(courtId, createCourtRequest);
+    }
+
     @ApiOperation(value = "find the court and its fields by court id", response = Court.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it")})
     @GET
@@ -74,17 +85,26 @@ public class CourtManagementResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fields")
-    public Court addFieldToCourt(@PathParam("courtId") String courtId, CreateFieldRequest createFieldRequest) {
+    public Court addFieldToCourt(@PathParam("courtId") String courtId, @RequestBody CreateFieldRequest createFieldRequest) {
         return courtAndFieldService.addFieldToCourt(courtId, createFieldRequest);
     }
 
-    @ApiOperation(value = "find the court and its fields by field id", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it including the field requested")})
-    @GET
+    @ApiOperation(value = "edit field information of a field from court", response = Field.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field")})
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/fields/{fieldId}")
-    public Court findByFieldId(@PathParam("fieldId") String fieldId) {
-        return courtAndFieldService.findCourtByFieldId(fieldId);
+    @Path("/courts/{courtId}/fields/{fieldId}")
+    public Field editField(@PathParam("courtId") String courtId, @PathParam("fieldId") String fieldId, @RequestBody FieldRequest fieldRequest) {
+        return courtAndFieldService.editField(courtId, fieldId, fieldRequest);
+    }
+
+    @ApiOperation(value = "delete a field from court", response = Field.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field")})
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/{courtId}/fields/{fieldId}")
+    public Field deleteField(@PathParam("courtId") String courtId, @PathParam("fieldId") String fieldId) {
+        return courtAndFieldService.deleteField(courtId, fieldId);
     }
 
     @ApiOperation(value = "add a new field type price to the court", response = Court.class)

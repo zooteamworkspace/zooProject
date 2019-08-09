@@ -44,7 +44,7 @@ public class CourtDOToResponseConverterTest {
     public void testConvertWithCourtId() {
         when(courtDO.getId()).thenReturn(Long.valueOf(123));
         Court court = testConverter.convert(courtDO);
-        assertEquals(123l, court.getId());
+        assertEquals(Long.valueOf(123), court.getId());
     }
 
     @Test

@@ -5,22 +5,37 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "courts")
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor // require for @Builder to work correctly
 @NoArgsConstructor // required for hibernate mapping
+@DynamicUpdate
+@SelectBeforeUpdate(false)
 public class CourtDO {
 
     @Id
@@ -67,6 +82,13 @@ public class CourtDO {
         fields.add(fieldDO);
         fieldDO.setCourt(this);
         return this;
+    }
+
+    public Optional<FieldDO> findFieldById(Long id) {
+		return getFields()
+			.stream()
+			.filter(fieldDO -> fieldDO.getId().equals(id))
+			.findFirst();
     }
 
     @LazyCollection(LazyCollectionOption.FALSE)

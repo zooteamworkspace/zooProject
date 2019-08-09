@@ -32,7 +32,7 @@ public class FieldDOToResponseConverterTest {
     public void testConvertWithFieldId() {
         when(fieldDO.getId()).thenReturn(Long.valueOf(123));
         Field field = testConverter.convert(fieldDO);
-        assertEquals(123l, field.getId());
+        assertEquals(Long.valueOf(123), field.getId());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class FieldDOToResponseConverterTest {
     public void testConvertWithFieldTypeId() {
         when(fieldDO.getFieldTypeId()).thenReturn(Long.valueOf(123));
         Field field = testConverter.convert(fieldDO);
-        assertEquals(123l, field.getFieldTypeId());
+        assertEquals(Long.valueOf(123), field.getFieldTypeId());
     }
 
     @Test

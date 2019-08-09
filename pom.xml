@@ -17,6 +17,8 @@
     <properties>
         <java.version>11</java.version>
         <swagger-jersey2-jaxrs>1.5.18</swagger-jersey2-jaxrs>
+        <!--there is a problem with @DynamicUpdate in 5.3.7.Final which do not happen in this version-->
+        <hibernate.version>5.4.4.Final</hibernate.version>
     </properties>
 
     <dependencies>

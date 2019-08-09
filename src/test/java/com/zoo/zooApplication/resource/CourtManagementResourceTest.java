@@ -2,7 +2,9 @@ package com.zoo.zooApplication.resource;
 
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
+import com.zoo.zooApplication.request.FieldRequest;
 import com.zoo.zooApplication.response.Court;
+import com.zoo.zooApplication.response.Field;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,6 +57,15 @@ public class CourtManagementResourceTest {
         assertEquals(expectCourt, response.getEntity());
     }
 
+	@Test
+	public void testEditCourt() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		Court expectCourt = mock(Court.class);
+		CreateCourtRequest mockRequest = mock(CreateCourtRequest.class);
+		when(mockCourtAndFieldService.editCourt("123", mockRequest)).thenReturn(expectCourt);
+		assertEquals(expectCourt, resource.editCourt("123", mockRequest));
+	}
+
     @Test
     public void testAddFieldToCourt() {
         CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
@@ -64,13 +75,20 @@ public class CourtManagementResourceTest {
         assertEquals(expectCourt, resource.addFieldToCourt("123", mockRequest));
     }
 
-    @Test
-    public void testFindCourtByFieldId() {
-        CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
-        Court expectCourt = mock(Court.class);
-        CreateFieldRequest mockRequest = mock(CreateFieldRequest.class);
-        when(mockCourtAndFieldService.findCourtByFieldId("123")).thenReturn(expectCourt);
-        assertEquals(expectCourt, resource.findByFieldId("123"));
-    }
+	@Test
+	public void testEditField() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		Field expectField = mock(Field.class);
+		FieldRequest mockRequest = mock(FieldRequest.class);
+		when(mockCourtAndFieldService.editField("123", "1", mockRequest)).thenReturn(expectField);
+		assertEquals(expectField, resource.editField("123", "1", mockRequest));
+	}
 
+	@Test
+	public void testDeleteField() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		Field expectField = mock(Field.class);
+		when(mockCourtAndFieldService.deleteField("123", "1")).thenReturn(expectField);
+		assertEquals(expectField, resource.deleteField("123", "1"));
+	}
 }

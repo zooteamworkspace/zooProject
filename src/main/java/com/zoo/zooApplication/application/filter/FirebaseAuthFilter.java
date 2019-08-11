@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseToken;
 import com.zoo.zooApplication.firebaseadaptor.FirebaseAuthImpl;
 import com.zoo.zooApplication.firebaseadaptor.IFirebaseAuth;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.core.Ordered;
 
@@ -20,17 +21,12 @@ import java.io.IOException;
 @FirebaseAuthentication // use for method name binding
 @Provider
 @Priority(Ordered.LOWEST_PRECEDENCE)
-@ConditionalOnBean(FirebaseAuth.class)
 public class FirebaseAuthFilter implements ContainerRequestFilter {
 
+    @Autowired(required = false)
     private FirebaseAuth firebaseAuth;
 
     private static final String HEADER_NAME = "X-Authorization-Firebase";
-
-    @Inject
-    public FirebaseAuthFilter(FirebaseAuth firebaseAuth) {
-        this.firebaseAuth = firebaseAuth;
-    }
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {

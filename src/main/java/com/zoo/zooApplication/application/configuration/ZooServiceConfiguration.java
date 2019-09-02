@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.zoo.zooApplication.application.filter.FirebaseAuthFilter;
+import com.zoo.zooApplication.application.filter.ZooMasterAuthFilter;
 import com.zoo.zooApplication.firebaseadaptor.FirebaseAuthBinder;
 import com.zoo.zooApplication.resource.BookingResource;
 import com.zoo.zooApplication.resource.CourtManagementResource;
@@ -42,6 +43,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
 		register(CourtManagementResource.class);
 		register(FirebaseAuthFilter.class);
 		register(new FirebaseAuthBinder());
+		register(ZooMasterAuthFilter.class);
 	}
 
 	@PostConstruct
@@ -69,7 +71,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
 		InputStream credentialStream = new ByteArrayInputStream(firebaseCredentialJSON.getBytes());
 		FirebaseOptions options = new FirebaseOptions.Builder()
 			.setCredentials(GoogleCredentials.fromStream(credentialStream))
-			.setDatabaseUrl("https://zoo-team.firebaseio.com/")
+			.setDatabaseUrl("https://zoo-application.firebaseio.com/")
 			.build();
 
 		return FirebaseApp.initializeApp(options);
@@ -82,7 +84,7 @@ public class ZooServiceConfiguration extends ResourceConfig {
 	public FirebaseApp getFirebaseAppFallBack() throws IOException {
 		FirebaseOptions options = new FirebaseOptions.Builder()
 			.setCredentials(GoogleCredentials.getApplicationDefault())
-			.setDatabaseUrl("https://zoo-team.firebaseio.com/")
+			.setDatabaseUrl("https://zoo-application.firebaseio.com/")
 			.build();
 
 		return FirebaseApp.initializeApp(options);

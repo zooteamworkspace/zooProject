@@ -1,25 +1,36 @@
 package com.zoo.zooApplication.resource;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.zoo.zooApplication.application.filter.FirebaseAuthentication;
+import com.zoo.zooApplication.application.filter.ZooMasterAuthentication;
 import com.zoo.zooApplication.firebaseadaptor.IFirebaseAuth;
+import com.zoo.zooApplication.request.ClaimKeyRequest;
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
 import com.zoo.zooApplication.request.CreateFieldTypeRequest;
 import com.zoo.zooApplication.request.CreatePriceChartRequest;
 import com.zoo.zooApplication.request.FieldRequest;
+import com.zoo.zooApplication.response.ClaimKey;
 import com.zoo.zooApplication.response.Court;
+import com.zoo.zooApplication.response.CourtsResponse;
 import com.zoo.zooApplication.response.Field;
 import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -49,8 +60,12 @@ public class CourtManagementResource {
     @ApiResponses(value = {@ApiResponse(code = 201, message = "Court has been added")})
     @POST
     @Produces(MediaType.APPLICATION_JSON)
+	@ZooMasterAuthentication
     @Path("/courts/")
-    public Response createBooking(@RequestBody CreateCourtRequest createCourtRequest, @Context UriInfo uriInfo) {
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "X-Authorization-Master", paramType = "header", dataTypeClass = String.class)
+	})
+    public Response createCourt(@RequestBody CreateCourtRequest createCourtRequest, @Context UriInfo uriInfo) {
         Court court = courtAndFieldService.createCourt(createCourtRequest);
         URI locationURI = uriInfo
                 .getAbsolutePathBuilder()
@@ -62,6 +77,46 @@ public class CourtManagementResource {
                 .build();
     }
 
+    @ApiOperation(value = "Find claim key for a court if unclaimed", response = ClaimKey.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Found claim key")})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/{courtId}/claimKey")
+    @ZooMasterAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Master", paramType = "header", dataTypeClass = String.class)
+    })
+    public ClaimKey findClaimKeyByCourtId(@PathParam("courtId") String courtId) {
+        return courtAndFieldService.findClaimKeyByCourtId(courtId);
+    }
+
+    @ApiOperation(value = "Find all court that current user has managing role on", response = CourtsResponse.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "All courts managed by user found")})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/managedByUser")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
+    public CourtsResponse findAllCourtsManagedByUser(@Context IFirebaseAuth userAuth) {
+        return courtAndFieldService.findAllCourtManageByUser(userAuth.getUid());
+    }
+
+    @ApiOperation(value = "claim to be owner of the court", response = Court.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court has been claimed")})
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/claimAsOwner")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
+    public Court claimCourtAsOwner(@RequestBody ClaimKeyRequest claimRequest, @Context IFirebaseAuth userAuth) {
+        claimRequest.setFirebaseAuth(userAuth);
+        return courtAndFieldService.claimCourtAsOwner(claimRequest);
+    }
+
     @ApiOperation(value = "edit the information of the court", response = Court.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Court edited")})
     @PUT
@@ -69,6 +124,15 @@ public class CourtManagementResource {
     @Path("/courts/{courtId}")
     public Court editCourt(@PathParam("courtId") String courtId, @RequestBody CreateCourtRequest createCourtRequest) {
         return courtAndFieldService.editCourt(courtId, createCourtRequest);
+    }
+
+    @ApiOperation(value = "find the court and its fields by court the claimKey only if field is unclaimed or allow to be re-claim", response = Court.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it")})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/claimKeys/{claimKey}")
+    public Court findByClaimKey(@PathParam("claimKey") String claimKey) {
+        return courtAndFieldService.findCourtByClaimKey(claimKey);
     }
 
     @ApiOperation(value = "find the court and its fields by court id", response = Court.class)

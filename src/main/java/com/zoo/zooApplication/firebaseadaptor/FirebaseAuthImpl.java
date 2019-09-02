@@ -2,7 +2,6 @@ package com.zoo.zooApplication.firebaseadaptor;
 
 import com.google.firebase.auth.FirebaseToken;
 
-// TODO: might need a way to test
 public class FirebaseAuthImpl implements IFirebaseAuth {
 
     private final FirebaseToken token;

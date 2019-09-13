@@ -26,7 +26,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,9 +58,6 @@ public class CourtAndFieldServiceImplTest {
 	private FieldTypeRepository fieldTypeRepository;
 
 	@Mock
-	private PriceChartRepository priceChartRepository;
-
-	@Mock
 	private FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter;
 
 	private CourtAndFieldServiceImpl courtAndFieldService;
@@ -70,7 +66,7 @@ public class CourtAndFieldServiceImplTest {
 	public void initMocks() {
 		MockitoAnnotations.initMocks(this);
 		courtAndFieldService = new CourtAndFieldServiceImpl(courtRepository, courtClaimOTPRepository, fieldRepository,
-			fieldTypeRepository, priceChartRepository,
+			fieldTypeRepository,
 			courtUserRoleRepository, courtDOToResponseConverter, fieldDOToResponseConverter, fieldTypeDOToResponseConverter);
 	}
 

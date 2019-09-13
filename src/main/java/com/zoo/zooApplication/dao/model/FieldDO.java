@@ -2,6 +2,8 @@ package com.zoo.zooApplication.dao.model;
 
 import com.zoo.zooApplication.dao.util.IdListToStringAttributeConverter;
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
+import com.zoo.zooApplication.dao.util.MainFieldTypeEnumConverter;
+import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
@@ -30,6 +32,10 @@ public class FieldDO {
     // name is SQL keyword
     @Column(name = "field_name")
     private String name;
+
+    @Column
+    @Convert(converter = MainFieldTypeEnumConverter.class)
+    private MainFieldTypeEnum mainFieldType;
 
     @Column
     private Long fieldTypeId;

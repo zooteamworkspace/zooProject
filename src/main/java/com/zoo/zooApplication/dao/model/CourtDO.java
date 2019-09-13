@@ -100,4 +100,11 @@ public class CourtDO {
         fieldTypeDO.setCourt(this);
         return this;
     }
+
+    public Optional<FieldTypeDO> findFieldTypeById(Long id) {
+        return getFieldTypes()
+            .stream()
+            .filter(fieldTypeDO -> fieldTypeDO.getId().equals(id))
+            .findFirst();
+    }
 }

@@ -6,17 +6,17 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
 @Setter
 @ApiModel(value = "FieldTypeRequest", description = "The specific types of all available fields")
 public class FieldTypeRequest {
-    @ApiModelProperty(value = "The field type")
-    private Long courtId;
-
-    @ApiModelProperty(value = "The main type of the field - 5,7,11")
-    private int mainType;
 
     @ApiModelProperty(value = "The name of field's type")
     private String fieldTypeName;
+
+    @ApiModelProperty(value = "The price charts for this type")
+    private List<PriceChartRequest> priceChartRequests;
 }

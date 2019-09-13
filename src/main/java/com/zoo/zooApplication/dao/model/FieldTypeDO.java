@@ -5,6 +5,8 @@ import com.zoo.zooApplication.dao.util.MainFieldTypeEnumConverter;
 import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -21,15 +23,13 @@ import java.util.List;
 @Builder
 @AllArgsConstructor // require for @Builder to work correctly
 @NoArgsConstructor // required for hibernate mapping
+@DynamicUpdate
+@SelectBeforeUpdate(false)
 public class FieldTypeDO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column
-    @Convert(converter = MainFieldTypeEnumConverter.class)
-    private MainFieldTypeEnum mainFieldType;
 
     // name is SQL keyword
     @Column(name = "field_type_name")
@@ -46,7 +46,7 @@ public class FieldTypeDO {
     private ZonedDateTime updatedAt;
 
     @ManyToOne(targetEntity = CourtDO.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "court_id")
+    @JoinColumn(name = "court_id", updatable = false)
     private CourtDO court;
 
     @OneToMany(targetEntity = PriceChartDO.class, fetch = FetchType.EAGER,

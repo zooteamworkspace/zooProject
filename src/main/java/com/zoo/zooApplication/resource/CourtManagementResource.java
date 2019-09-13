@@ -7,8 +7,8 @@ import com.zoo.zooApplication.request.ClaimKeyRequest;
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
 import com.zoo.zooApplication.request.CreateFieldTypeRequest;
-import com.zoo.zooApplication.request.CreatePriceChartRequest;
 import com.zoo.zooApplication.request.FieldRequest;
+import com.zoo.zooApplication.request.FieldTypeRequest;
 import com.zoo.zooApplication.response.ClaimKey;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.CourtsResponse;
@@ -181,13 +181,25 @@ public class CourtManagementResource {
         return courtAndFieldService.addFieldTypeToCourt(courtId, createFieldTypeRequest);
     }
 
-    @ApiOperation(value = "add a price chart to specific field type", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the price chart to specific field type")})
-    @POST
+    @ApiOperation(value = "edit field type information of the court", response = FieldType.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edit the field type")})
+    @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/fieldTypes/{fieldTypeId}/priceCharts")
-    public FieldType addPriceChartToFieldType(@PathParam("fieldTypeId") String fieldTypeId,
-                                              CreatePriceChartRequest createPriceChartRequest){
-        return courtAndFieldService.addPriceChartToFieldType(fieldTypeId, createPriceChartRequest);
+    @Path("/courts/{courtId}/fieldTypes/{fieldTypeId}")
+    public FieldType editFieldType(@PathParam("courtId") String courtId,
+                                         @PathParam("fieldTypeId") String fieldTypeId,
+                                         FieldTypeRequest fieldTypeRequest){
+        return courtAndFieldService.editFieldType(courtId, fieldTypeId, fieldTypeRequest);
     }
+
+    @ApiOperation(value = "delete a field from court", response = Field.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field")})
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/{courtId}/fieldTypes/{fieldTypeId}")
+    public FieldType deleteFieldType(@PathParam("courtId") String courtId, @PathParam("fieldTypeId") String fieldTypeId) {
+        return courtAndFieldService.deleteFieldType(courtId, fieldTypeId);
+    }
+
+
 }

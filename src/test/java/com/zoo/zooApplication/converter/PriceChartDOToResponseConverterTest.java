@@ -29,13 +29,6 @@ public class PriceChartDOToResponseConverterTest {
         testConverter.convert(null);
     }
 
-    @Test
-    public void testConvertWithPriceId() {
-        when(priceChartDO.getId()).thenReturn(Long.valueOf(123));
-        PriceChart priceChart = testConverter.convert(priceChartDO);
-        assertEquals(123l, priceChart.getId());
-    }
-
 //    TODO
 //    @Test
 //    public void testConvertWithFieldType(){
@@ -51,17 +44,17 @@ public class PriceChartDOToResponseConverterTest {
 //        assertEquals("Normal",priceChart.getPriceType());
 //    }
 
-    @Test
-    public void testConvertWithTimeStart(){
-        when(priceChartDO.getTimeStart()).thenReturn(LocalTime.of(1,1,1));
-        PriceChart priceChart = testConverter.convert(priceChartDO);
-        assertEquals("01:01:01",priceChart.getTimeStart());
-    }
-
-    @Test
-    public void testConvertWithTimeEnd(){
-        when(priceChartDO.getTimeEnd()).thenReturn(LocalTime.of(1,1,1));
-        PriceChart priceChart = testConverter.convert(priceChartDO);
-        assertEquals("01:01:01",priceChart.getTimeEnd());
-    }
+//    @Test
+//    public void testConvertWithTimeStart(){
+//        when(priceChartDO.getTimeStart()).thenReturn(LocalTime.of(1,1,1));
+//        PriceChart priceChart = testConverter.convert(priceChartDO);
+//        assertEquals("01:01:01",priceChart.getTimeStart());
+//    }
+//
+//    @Test
+//    public void testConvertWithTimeEnd(){
+//        when(priceChartDO.getTimeEnd()).thenReturn(LocalTime.of(1,1,1));
+//        PriceChart priceChart = testConverter.convert(priceChartDO);
+//        assertEquals("01:01:01",priceChart.getTimeEnd());
+//    }
 }

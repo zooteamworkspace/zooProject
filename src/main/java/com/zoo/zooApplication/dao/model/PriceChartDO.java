@@ -4,6 +4,8 @@ import com.zoo.zooApplication.dao.util.DOTimestampConverter;
 import com.zoo.zooApplication.type.DayOfWeekEnum;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -17,15 +19,13 @@ import java.time.ZonedDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicUpdate
+@SelectBeforeUpdate(false)
 public class PriceChartDO {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Enumerated(EnumType.ORDINAL)
-    @Column(nullable = false,columnDefinition = "day_of_week")
-    private DayOfWeekEnum day;
 
     @Column
     private Double priceAmount;
@@ -34,12 +34,10 @@ public class PriceChartDO {
     private String currencyId;
 
     @Column(nullable = false)
-    @Convert(converter = DOTimestampConverter.class)
-    private LocalTime timeStart;
+    private Integer timeStart;
 
     @Column(nullable = false)
-    @Convert(converter = DOTimestampConverter.class)
-    private LocalTime timeEnd;
+    private Integer timeEnd;
 
     @Column(nullable = false)
     @Convert(converter = DOTimestampConverter.class)
@@ -52,6 +50,7 @@ public class PriceChartDO {
     private ZonedDateTime updatedAt;
 
     @ManyToOne(targetEntity = FieldTypeDO.class, fetch = FetchType.EAGER)
-    @JoinColumn(name="field_type_id")
+    @JoinColumn(name="field_type_id", updatable = false)
     private FieldTypeDO fieldType;
+
 }

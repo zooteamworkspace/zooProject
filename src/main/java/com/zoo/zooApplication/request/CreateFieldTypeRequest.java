@@ -15,5 +15,5 @@ import java.util.List;
 public class CreateFieldTypeRequest {
 
     @ApiModelProperty(value = "List of field type request to add to a court")
-    private List<FieldTypeRequest> fieldTypeRequestList;
+    private List<FieldTypeRequest> fieldTypeRequests;
 }

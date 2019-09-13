@@ -14,12 +14,10 @@ import com.zoo.zooApplication.dao.repository.CourtRepository;
 import com.zoo.zooApplication.dao.repository.CourtUserRoleRepository;
 import com.zoo.zooApplication.dao.repository.FieldRepository;
 import com.zoo.zooApplication.dao.repository.FieldTypeRepository;
-import com.zoo.zooApplication.dao.repository.PriceChartRepository;
 import com.zoo.zooApplication.request.ClaimKeyRequest;
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
 import com.zoo.zooApplication.request.CreateFieldTypeRequest;
-import com.zoo.zooApplication.request.CreatePriceChartRequest;
 import com.zoo.zooApplication.request.FieldRequest;
 import com.zoo.zooApplication.request.FieldTypeRequest;
 import com.zoo.zooApplication.request.PriceChartRequest;
@@ -30,7 +28,6 @@ import com.zoo.zooApplication.response.Field;
 import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import com.zoo.zooApplication.type.CourtRoleEnum;
-import com.zoo.zooApplication.util.DateTimeUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -38,6 +35,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,8 +54,6 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 
 	private FieldTypeRepository fieldTypeRepository;
 
-	private PriceChartRepository priceChartRepository;
-
 	private CourtUserRoleRepository courtUserRoleRepository;
 
 	private CourtDOToResponseConverter courtDOToResponseConverter;
@@ -65,16 +63,20 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 	private FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter;
 
 	@Inject
-	public CourtAndFieldServiceImpl(CourtRepository courtRepository, CourtClaimOTPRepository courtClaimOTPRepository, FieldRepository fieldRepository,
-									FieldTypeRepository fieldTypeRepository, PriceChartRepository priceChartRepository,
-									CourtUserRoleRepository courtUserRoleRepository, CourtDOToResponseConverter courtDOToResponseConverter, FieldDOToResponseConverter fieldDOToResponseConverter, FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter) {
+	public CourtAndFieldServiceImpl(CourtRepository courtRepository,
+									CourtClaimOTPRepository courtClaimOTPRepository,
+									FieldRepository fieldRepository,
+									FieldTypeRepository fieldTypeRepository,
+									CourtUserRoleRepository courtUserRoleRepository,
+									CourtDOToResponseConverter courtDOToResponseConverter,
+									FieldDOToResponseConverter fieldDOToResponseConverter,
+									FieldTypeDOToResponseConverter fieldTypeDOToResponseConverter) {
 		this.courtRepository = courtRepository;
 		this.courtClaimOTPRepository = courtClaimOTPRepository;
 		this.fieldRepository = fieldRepository;
 		this.courtUserRoleRepository = courtUserRoleRepository;
 		this.courtDOToResponseConverter = courtDOToResponseConverter;
 		this.fieldTypeRepository = fieldTypeRepository;
-		this.priceChartRepository = priceChartRepository;
 		this.fieldDOToResponseConverter = fieldDOToResponseConverter;
 		this.fieldTypeDOToResponseConverter = fieldTypeDOToResponseConverter;
 	}
@@ -236,6 +238,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 				.map(request -> FieldDO
 					.builder()
 					.name(request.getName())
+					.mainFieldType(request.getMainFieldType())
 					.fieldTypeId(request.getFieldTypeId())
 					.subFieldIds(request.getSubFieldIds())
 					.build())
@@ -251,16 +254,20 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 
 		return court
 			.flatMap(courtDO -> courtDO.findFieldById(NumberUtils.toLong(fieldId)))
-			.map(fieldDO -> editFieldDOInfo(fieldDO, court.get(), fieldRequest))
+			.map(fieldDO -> editFieldDOInfo(fieldDO, fieldRequest))
 			.map(fieldRepository::save)
 			.map(fieldDOToResponseConverter::convert)
 			.orElse(null);
 	}
 
-	private FieldDO editFieldDOInfo(FieldDO fieldDO, CourtDO courtDO, FieldRequest fieldRequest) {
+	private FieldDO editFieldDOInfo(FieldDO fieldDO, FieldRequest fieldRequest) {
 		// TODO: same as creation, assume info is correct and valid, need validation and proper handling if the api is more open
 		if (StringUtils.isNotBlank(fieldRequest.getName())) {
 			fieldDO.setName(fieldRequest.getName());
+		}
+
+		if (fieldRequest.getMainFieldType() != null) {
+			fieldDO.setMainFieldType(fieldRequest.getMainFieldType());
 		}
 
 		if (fieldRequest.getFieldTypeId() != null) {
@@ -296,12 +303,13 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 		return Optional.empty();
 	}
 
+	@Transactional
 	@Override
 	public Court addFieldTypeToCourt(String courtId, CreateFieldTypeRequest createFieldTypeRequest) {
 		Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
 
 		return court
-			.map(courtDO -> addFieldTypeDO(courtDO, createFieldTypeRequest.getFieldTypeRequestList()))
+			.map(courtDO -> addFieldTypeDO(courtDO, createFieldTypeRequest.getFieldTypeRequests()))
 			.map(courtRepository::save)
 			.map(courtDOToResponseConverter::convert)
 			.orElse(null);
@@ -311,40 +319,108 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 		if (CollectionUtils.isNotEmpty(fieldTypeRequests)) {
 			fieldTypeRequests
 				.stream()
-				.map(request -> FieldTypeDO
-					.builder()
-					//.fieldType(MainFieldTypeEnum.getById(request.getMainType()))
-					.name(request.getFieldTypeName())
-					.build())
+				.map(request -> buildFieldType(request))
 				.forEach(fieldTypeDO -> courtDO.addFieldType(fieldTypeDO));
 		}
 		return courtDO;
 	}
 
-	//    TODO
-	@Override
-	public FieldType addPriceChartToFieldType(String fieldTypeId, CreatePriceChartRequest createPriceChartRequest) {
-		Optional<FieldTypeDO> fieldType = fieldTypeRepository.findById(NumberUtils.toLong(fieldTypeId));
+	private FieldTypeDO buildFieldType(FieldTypeRequest fieldTypeRequest) {
+		FieldTypeDO fieldTypeDO = FieldTypeDO
+			.builder()
+			.name(fieldTypeRequest.getFieldTypeName())
+			.build();
 
-		return fieldType
-			.map(fieldTypeDO -> addPriceChartDO(fieldTypeDO, createPriceChartRequest.getPriceChartRequests()))
+		if (CollectionUtils.isNotEmpty(fieldTypeRequest.getPriceChartRequests())) {
+			fieldTypeRequest
+				.getPriceChartRequests()
+				.stream()
+				.map(priceChartRequest -> buildPriceChart(priceChartRequest))
+				.forEach(priceChartDO -> fieldTypeDO.addPriceChart(priceChartDO));
+
+		}
+
+		return fieldTypeDO;
+	}
+
+	private PriceChartDO buildPriceChart(PriceChartRequest priceChartRequest) {
+		return PriceChartDO
+			.builder()
+			.timeStart(priceChartRequest.getTimeStart())
+			.timeEnd(priceChartRequest.getTimeEnd())
+			.priceAmount(priceChartRequest.getPriceAmount())
+			.currencyId("VND")
+			.build();
+	}
+
+	@Transactional
+	@Override
+	public FieldType editFieldType(String courtId, String fieldTypeId, FieldTypeRequest fieldTypeRequest) {
+		Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
+
+		return court
+			.flatMap(courtDO -> courtDO.findFieldTypeById(NumberUtils.toLong(fieldTypeId)))
+			.map(fieldTypeDO -> editFieldTypeDOInfo(fieldTypeDO, fieldTypeRequest))
 			.map(fieldTypeRepository::save)
 			.map(fieldTypeDOToResponseConverter::convert)
 			.orElse(null);
 	}
 
-	private FieldTypeDO addPriceChartDO(FieldTypeDO fieldTypeDO, List<PriceChartRequest> priceChartRequest) {
-		if (CollectionUtils.isNotEmpty(priceChartRequest)) {
-			priceChartRequest
-				.stream()
-				.map(request -> PriceChartDO
-					.builder()
-					.priceAmount(request.getPriceAmount())
-					.timeStart(DateTimeUtil.parseISO8601TimeFormat(request.getTimeStart()))
-					.timeEnd(DateTimeUtil.parseISO8601TimeFormat(request.getTimeEnd()))
-					.build())
-				.forEach(priceChartDO -> fieldTypeDO.addPriceChart(priceChartDO));
+	private FieldTypeDO editFieldTypeDOInfo(FieldTypeDO fieldTypeDO, FieldTypeRequest fieldTypeRequest) {
+		if (StringUtils.isNotBlank(fieldTypeRequest.getFieldTypeName())) {
+			fieldTypeDO.setName(fieldTypeRequest.getFieldTypeName());
 		}
+
+		// since price chart can be add/remove or edit in place, reuse object if possible
+		// rather than complete remove then re-add, edit without checking diff for price chart
+		if (CollectionUtils.isNotEmpty(fieldTypeRequest.getPriceChartRequests())) {
+			List<PriceChartRequest> priceChartRequests = fieldTypeRequest.getPriceChartRequests();
+			List<PriceChartDO> priceChartDOs = fieldTypeDO.getPriceCharts();
+			int sizeDiff = priceChartDOs.size() - priceChartRequests.size();
+			// if there is size diff, match the count for do
+			for (int i = 0; i < Math.abs(sizeDiff); i++) {
+				if (sizeDiff < 0) {
+					// more price chart in request, add
+					// add using fieldTypeDO to sync the mapping
+					// the list is same
+					fieldTypeDO.addPriceChart(PriceChartDO.builder().build());
+				} else {
+					priceChartDOs.remove(priceChartDOs.size() - 1);
+				}
+			}
+			// now sync the info
+			for (int i = 0; i < priceChartDOs.size(); i++) {
+				priceChartDOs.get(i).setTimeStart(priceChartRequests.get(i).getTimeStart());
+				priceChartDOs.get(i).setTimeEnd(priceChartRequests.get(i).getTimeEnd());
+				priceChartDOs.get(i).setPriceAmount(priceChartRequests.get(i).getPriceAmount());
+			}
+
+		}
+
 		return fieldTypeDO;
 	}
+
+	@Transactional
+	@Override
+	public FieldType deleteFieldType(String courtId, String fieldTypeId) {
+		Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
+
+		return court
+			.flatMap(courtDO -> findFieldTypeAndDeleteFromCourt(courtDO, fieldTypeId))
+			.map(fieldTypeDOToResponseConverter::convert)
+			.orElse(null);
+	}
+
+	private Optional<FieldTypeDO> findFieldTypeAndDeleteFromCourt(CourtDO courtDO, String fieldTypeId) {
+		Optional<FieldTypeDO> fieldTypeDOOptional = courtDO.findFieldTypeById(NumberUtils.toLong(fieldTypeId));
+		if (fieldTypeDOOptional.isPresent()) {
+			courtDO
+				.getFieldTypes()
+				.removeIf(fieldTypeDO -> fieldTypeDO.getId().equals(NumberUtils.toLong(fieldTypeId)));
+			courtRepository.save(courtDO);
+			return fieldTypeDOOptional;
+		}
+		return Optional.empty();
+	}
+
 }

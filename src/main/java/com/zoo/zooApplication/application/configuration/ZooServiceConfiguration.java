@@ -4,6 +4,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.moesif.servlet.MoesifFilter;
 import com.zoo.zooApplication.application.filter.FirebaseAuthFilter;
 import com.zoo.zooApplication.application.filter.ZooMasterAuthFilter;
 import com.zoo.zooApplication.firebaseadaptor.FirebaseAuthBinder;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.Filter;
 import javax.ws.rs.ApplicationPath;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -88,6 +90,12 @@ public class ZooServiceConfiguration extends ResourceConfig {
 			.build();
 
 		return FirebaseApp.initializeApp(options);
+	}
+
+	@Bean
+	@ConditionalOnProperty(value = "MOESIF_APPLICATION_ID")
+	public Filter moesifFilter(@Value("${MOESIF_APPLICATION_ID:false}") String moesifAppId) {
+		return new MoesifFilter(moesifAppId);
 	}
 
 	@Bean

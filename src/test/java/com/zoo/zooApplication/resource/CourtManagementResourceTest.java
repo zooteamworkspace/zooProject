@@ -4,10 +4,14 @@ import com.zoo.zooApplication.firebaseadaptor.IFirebaseAuth;
 import com.zoo.zooApplication.request.ClaimKeyRequest;
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
+import com.zoo.zooApplication.request.CreateFieldTypeRequest;
 import com.zoo.zooApplication.request.FieldRequest;
+import com.zoo.zooApplication.request.FieldTypeRequest;
+import com.zoo.zooApplication.response.ClaimKey;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.CourtsResponse;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.response.FieldType;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +43,22 @@ public class CourtManagementResourceTest {
         when(mockCourtAndFieldService.findCourtById("123")).thenReturn(expectCourt);
         assertEquals(expectCourt, resource.findById("123"));
     }
+
+	@Test
+	public void testDeleteCourt() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		Court expectCourt = mock(Court.class);
+		when(mockCourtAndFieldService.deleteCourt("123")).thenReturn(expectCourt);
+		assertEquals(expectCourt, resource.deleteCourt("123"));
+	}
+
+	@Test
+	public void testFindClaimKeyByCourtId() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		ClaimKey expectClaimKey = mock(ClaimKey.class);
+		when(mockCourtAndFieldService.findClaimKeyByCourtId("123")).thenReturn(expectClaimKey);
+		assertEquals(expectClaimKey, resource.findClaimKeyByCourtId("123"));
+	}
 
     @Test
     public void testCreateCourt() {
@@ -121,6 +141,32 @@ public class CourtManagementResourceTest {
 		Field expectField = mock(Field.class);
 		when(mockCourtAndFieldService.deleteField("123", "1")).thenReturn(expectField);
 		assertEquals(expectField, resource.deleteField("123", "1"));
+	}
+
+	@Test
+	public void testAddFieldTypeToCourt() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		Court expectCourt = mock(Court.class);
+		CreateFieldTypeRequest mockRequest = mock(CreateFieldTypeRequest.class);
+		when(mockCourtAndFieldService.addFieldTypeToCourt("123", mockRequest)).thenReturn(expectCourt);
+		assertEquals(expectCourt, resource.addFieldTypeToCourt("123", mockRequest));
+	}
+
+	@Test
+	public void testEditFieldType() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		FieldType expectFieldType = mock(FieldType.class);
+		FieldTypeRequest mockRequest = mock(FieldTypeRequest.class);
+		when(mockCourtAndFieldService.editFieldType("123", "1", mockRequest)).thenReturn(expectFieldType);
+		assertEquals(expectFieldType, resource.editFieldType("123", "1", mockRequest));
+	}
+
+	@Test
+	public void testDeleteFieldType() {
+		CourtManagementResource resource = new CourtManagementResource(mockCourtAndFieldService);
+		FieldType expectField = mock(FieldType.class);
+		when(mockCourtAndFieldService.deleteFieldType("123", "1")).thenReturn(expectField);
+		assertEquals(expectField, resource.deleteFieldType("123", "1"));
 	}
 
 }

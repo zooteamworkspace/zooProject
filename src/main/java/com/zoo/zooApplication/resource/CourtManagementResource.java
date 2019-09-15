@@ -77,6 +77,19 @@ public class CourtManagementResource {
                 .build();
     }
 
+	@ApiOperation(value = "create a new court", response = Court.class)
+	@ApiResponses(value = {@ApiResponse(code = 201, message = "Court has been added")})
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@ZooMasterAuthentication
+	@Path("/courts/{courtId}")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name = "X-Authorization-Master", paramType = "header", dataTypeClass = String.class)
+	})
+	public Court deleteCourt(@PathParam("courtId") String courtId) {
+    	return courtAndFieldService.deleteCourt(courtId);
+	}
+
     @ApiOperation(value = "Find claim key for a court if unclaimed", response = ClaimKey.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Found claim key")})
     @GET

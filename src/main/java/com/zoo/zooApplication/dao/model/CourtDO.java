@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -17,9 +15,11 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.ZonedDateTime;
@@ -74,13 +74,13 @@ public class CourtDO {
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(targetEntity = FieldDO.class, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
+    @OneToMany(targetEntity = FieldDO.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "courtId")
     private final List<FieldDO> fields = new ArrayList<>();
 
     public CourtDO addField(FieldDO fieldDO) {
-        fields.add(fieldDO);
-        fieldDO.setCourt(this);
+        getFields().add(fieldDO);
+        fieldDO.setCourtId(this.getId());
         return this;
     }
 
@@ -91,13 +91,13 @@ public class CourtDO {
 			.findFirst();
     }
 
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @OneToMany(targetEntity = FieldTypeDO.class, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "court")
+    @OneToMany(targetEntity = FieldTypeDO.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "courtId")
     private final List<FieldTypeDO> fieldTypes = new ArrayList<>();
 
     public CourtDO addFieldType(FieldTypeDO fieldTypeDO){
         fieldTypes.add(fieldTypeDO);
-        fieldTypeDO.setCourt(this);
+        fieldTypeDO.setCourtId(this.getId());
         return this;
     }
 

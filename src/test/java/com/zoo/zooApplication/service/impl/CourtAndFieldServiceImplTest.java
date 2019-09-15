@@ -20,6 +20,7 @@ import com.zoo.zooApplication.request.FieldRequest;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.CourtsResponse;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -288,6 +289,20 @@ public class CourtAndFieldServiceImplTest {
 	}
 
 	@Test
+	public void testDeleteCourt() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(mockCourt.getId()).thenReturn(123L);
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(mockCourt));
+
+		Court court = mock(Court.class);
+		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(court);
+		assertEquals(court, courtAndFieldService.deleteCourt("123"));
+		verify(courtRepository, times(1)).delete(mockCourt);
+		verify(courtClaimOTPRepository, times(1)).deleteById(Long.valueOf(123));
+		verify(courtUserRoleRepository, times(1)).deleteByCourtId(Long.valueOf(123));
+	}
+
+	@Test
 	public void testClaimCourtAsOwner() {
 		ClaimKeyRequest mockRequest = spy(new ClaimKeyRequest());
 		doReturn("uid").when(mockRequest).getUid();
@@ -340,6 +355,14 @@ public class CourtAndFieldServiceImplTest {
 		Court response = mock(Court.class);
 		when(courtDOToResponseConverter.convert(mockCourtDO)).thenReturn(response);
 		assertEquals(response, courtAndFieldService.findCourtByClaimKey("testClaimKey"));
+	}
+
+	@Test
+	public void testFindClaimKeyByCourtId() {
+		CourtClaimOTPDO mockCourClaimOTP = mock(CourtClaimOTPDO.class);
+		when(courtClaimOTPRepository.findById(Long.valueOf(123))).thenReturn(Optional.of(mockCourClaimOTP));
+		when(mockCourClaimOTP.getClaimKey()).thenReturn("testKey");
+		assertEquals("testKey", courtAndFieldService.findClaimKeyByCourtId("123").getClaimKey());
 	}
 
 	/* COURT MANAGEMENT TESTS END */
@@ -428,6 +451,22 @@ public class CourtAndFieldServiceImplTest {
 		when(fieldDOToResponseConverter.convert(mockField)).thenReturn(expectField);
 		assertEquals(expectField, courtAndFieldService.editField("1", "1", fieldRequest));
 		verify(mockField, times(1)).setFieldTypeId(Long.valueOf(123));
+		verifyNoMoreInteractions(mockField);
+	}
+
+	@Test
+	public void testEditFieldMainFieldType() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldDO mockField = mock(FieldDO.class);
+		when(mockCourt.findFieldById(1L)).thenReturn(Optional.of(mockField));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldRequest fieldRequest = new FieldRequest();
+		fieldRequest.setMainFieldType(MainFieldTypeEnum.SOCCER_5);
+		Field expectField = mock(Field.class);
+		when(fieldRepository.save(mockField)).thenReturn(mockField);
+		when(fieldDOToResponseConverter.convert(mockField)).thenReturn(expectField);
+		assertEquals(expectField, courtAndFieldService.editField("1", "1", fieldRequest));
+		verify(mockField, times(1)).setMainFieldType(MainFieldTypeEnum.SOCCER_5);
 		verifyNoMoreInteractions(mockField);
 	}
 

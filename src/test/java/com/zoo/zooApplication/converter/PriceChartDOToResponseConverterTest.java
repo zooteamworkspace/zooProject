@@ -1,6 +1,7 @@
 package com.zoo.zooApplication.converter;
 
 import com.zoo.zooApplication.dao.model.PriceChartDO;
+import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.Field;
 import com.zoo.zooApplication.response.PriceChart;
 import org.junit.Before;
@@ -29,32 +30,32 @@ public class PriceChartDOToResponseConverterTest {
         testConverter.convert(null);
     }
 
-//    TODO
-//    @Test
-//    public void testConvertWithFieldType(){
-//        when(priceChartDO.getFieldType()).thenReturn("5");
-//        PriceChart priceChart = testConverter.convert(priceChartDO);
-//        assertEquals("5",priceChart.getFieldType());
-//    }
-//
-//    @Test
-//    public void testConvertWithPriceType(){
-//        when(priceChartDO.getPriceType()).thenReturn("Normal");
-//        PriceChart priceChart = testConverter.convert(priceChartDO);
-//        assertEquals("Normal",priceChart.getPriceType());
-//    }
+    @Test
+    public void testConvertWithPriceAmount() {
+        when(priceChartDO.getPriceAmount()).thenReturn(Double.valueOf(123));
+        PriceChart priceChart = testConverter.convert(priceChartDO);
+        assertEquals(Double.valueOf(123), priceChart.getPriceAmount());
+    }
 
-//    @Test
-//    public void testConvertWithTimeStart(){
-//        when(priceChartDO.getTimeStart()).thenReturn(LocalTime.of(1,1,1));
-//        PriceChart priceChart = testConverter.convert(priceChartDO);
-//        assertEquals("01:01:01",priceChart.getTimeStart());
-//    }
-//
-//    @Test
-//    public void testConvertWithTimeEnd(){
-//        when(priceChartDO.getTimeEnd()).thenReturn(LocalTime.of(1,1,1));
-//        PriceChart priceChart = testConverter.convert(priceChartDO);
-//        assertEquals("01:01:01",priceChart.getTimeEnd());
-//    }
+    @Test
+    public void testConvertWithCurrencyId() {
+        when(priceChartDO.getCurrencyId()).thenReturn("VND");
+        PriceChart priceChart = testConverter.convert(priceChartDO);
+        assertEquals("VND", priceChart.getCurrencyId());
+    }
+
+    @Test
+    public void testConvertWithTimeStart() {
+        when(priceChartDO.getTimeStart()).thenReturn(Integer.valueOf(123));
+        PriceChart priceChart = testConverter.convert(priceChartDO);
+        assertEquals(Integer.valueOf(123), priceChart.getTimeStart());
+    }
+
+    @Test
+    public void testConvertWithTimeEnd() {
+        when(priceChartDO.getTimeEnd()).thenReturn(Integer.valueOf(123));
+        PriceChart priceChart = testConverter.convert(priceChartDO);
+        assertEquals(Integer.valueOf(123), priceChart.getTimeEnd());
+    }
+
 }

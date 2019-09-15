@@ -121,32 +121,6 @@ public class CourtDOToResponseConverterTest {
         assertEquals(expectList, court.getFields());
     }
 
-    //TODO
-//    @Test
-//    public void testConvertWithEmptyPriceChart(){
-//        when(courtDO.getPriceCharts()).thenReturn(new ArrayList<>());
-//        Court court = testConverter.convert(courtDO);
-//        assertTrue(court.getPriceCharts().isEmpty());
-//    }
-//
-//    @Test
-//    public void testConvertWithPriceCharts(){
-//        List<PriceChartDO> mockList = new ArrayList<>();
-//        mockList.add(mock(PriceChartDO.class));
-//        mockList.add(mock(PriceChartDO.class));
-//
-//        List<PriceChart> expectList = new ArrayList<>();
-//        expectList.add(mock(PriceChart.class));
-//        expectList.add(mock(PriceChart.class));
-//
-//        when(priceChartDOToResponseConverter.convert(mockList.get(0))).thenReturn(expectList.get(0));
-//        when(priceChartDOToResponseConverter.convert(mockList.get(1))).thenReturn(expectList.get(1));
-//        when(courtDO.getPriceCharts()).thenReturn(mockList);
-//
-//        Court court = testConverter.convert(courtDO);
-//        assertEquals(expectList, court.getPriceCharts());
-//    }
-
     @Test
     public void testConvertWithEmptyFieldType() {
         when(courtDO.getFields()).thenReturn(new ArrayList<>());

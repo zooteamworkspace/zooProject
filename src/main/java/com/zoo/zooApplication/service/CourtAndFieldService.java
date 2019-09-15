@@ -20,6 +20,8 @@ public interface CourtAndFieldService {
 
 	Court editCourt(String courtId, CreateCourtRequest createCourtRequest);
 
+	Court deleteCourt(String courtId);
+
 	Court claimCourtAsOwner(ClaimKeyRequest claimRequest);
 
 	CourtsResponse findAllCourtManageByUser(String uid);
@@ -39,4 +41,5 @@ public interface CourtAndFieldService {
 	FieldType editFieldType(String courtId, String fieldTypeId, FieldTypeRequest fieldTypeRequest);
 
 	FieldType deleteFieldType(String courtId, String fieldTypeId);
+
 }

@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface CourtUserRoleRepository extends JpaRepository<CourtUserRoleDO, CourtUserRoleId>, CourtUserRoleRepositoryCustom {
 	List<CourtUserRoleDO> findByUid(String uid);
+
+	void deleteByCourtId(Long courtId);
 }

@@ -8,8 +8,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.GeneratorType;
+import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
@@ -26,6 +28,8 @@ import java.time.ZonedDateTime;
 @Builder
 @AllArgsConstructor // require for @Builder to work correctly
 @NoArgsConstructor // required for hibernate mapping
+@DynamicUpdate
+@SelectBeforeUpdate(false)
 public class CourtClaimOTPDO {
 
 	@Id

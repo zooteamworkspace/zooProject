@@ -35,9 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -143,6 +140,22 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 		return courtDO;
 	}
 
+	@Transactional
+	@Override
+	public Court deleteCourt(String courtId) {
+		Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
+		if (court.isPresent()) {
+			CourtDO courtDO = court.get();
+			courtRepository.delete(courtDO);
+			courtClaimOTPRepository.deleteById(courtDO.getId());
+			courtUserRoleRepository.deleteByCourtId(courtDO.getId());
+			return courtDOToResponseConverter.convert(courtDO);
+		}
+
+		return null;
+	}
+
+	@Transactional(readOnly = true)
 	@Override
 	public Court findCourtById(String courtId) {
 		Optional<CourtDO> court = courtRepository.findById(NumberUtils.toLong(courtId));
@@ -206,6 +219,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 			.orElse(null);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public ClaimKey findClaimKeyByCourtId(String courtId) {
 		Optional<CourtClaimOTPDO> courtClaimOTP = courtClaimOTPRepository.findById(NumberUtils.toLong(courtId));
@@ -218,6 +232,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 			.build();
 	}
 
+	@Transactional
 	@Override
 	public Court addFieldToCourt(String courtId, CreateFieldRequest createFieldRequest) {
 		// TODO: eventually, will need to validate CreateFieldRequest, right now assume input correct
@@ -393,6 +408,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 				priceChartDOs.get(i).setTimeStart(priceChartRequests.get(i).getTimeStart());
 				priceChartDOs.get(i).setTimeEnd(priceChartRequests.get(i).getTimeEnd());
 				priceChartDOs.get(i).setPriceAmount(priceChartRequests.get(i).getPriceAmount());
+				priceChartDOs.get(i).setCurrencyId("VND");
 			}
 
 		}

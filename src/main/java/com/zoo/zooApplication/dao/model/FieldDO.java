@@ -1,16 +1,26 @@
 package com.zoo.zooApplication.dao.model;
 
-import com.zoo.zooApplication.dao.util.IdListToStringAttributeConverter;
 import com.zoo.zooApplication.dao.util.DOTimestampConverter;
+import com.zoo.zooApplication.dao.util.IdListToStringAttributeConverter;
 import com.zoo.zooApplication.dao.util.MainFieldTypeEnumConverter;
 import com.zoo.zooApplication.type.MainFieldTypeEnum;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SelectBeforeUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -37,6 +47,9 @@ public class FieldDO {
     @Convert(converter = MainFieldTypeEnumConverter.class)
     private MainFieldTypeEnum mainFieldType;
 
+    @Column(updatable = false)
+    private Long courtId;
+
     @Column
     private Long fieldTypeId;
 
@@ -53,9 +66,5 @@ public class FieldDO {
     @Convert(converter = DOTimestampConverter.class)
     @UpdateTimestamp
     private ZonedDateTime updatedAt;
-
-    @ManyToOne(targetEntity = CourtDO.class, fetch = FetchType.EAGER)
-    @JoinColumn(name = "court_id", updatable = false)
-    private CourtDO court;
 
 }

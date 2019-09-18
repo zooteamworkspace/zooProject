@@ -57,7 +57,7 @@ public class CourtManagementResource {
     }
 
     @ApiOperation(value = "create a new court", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 201, message = "Court has been added")})
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Court has been added", response = Court.class)})
     @POST
     @Produces(MediaType.APPLICATION_JSON)
 	@ZooMasterAuthentication
@@ -78,7 +78,7 @@ public class CourtManagementResource {
     }
 
 	@ApiOperation(value = "create a new court", response = Court.class)
-	@ApiResponses(value = {@ApiResponse(code = 201, message = "Court has been added")})
+	@ApiResponses(value = {@ApiResponse(code = 200, message = "Court has been delete")})
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@ZooMasterAuthentication

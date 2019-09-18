@@ -65,7 +65,7 @@ public class FieldTypeDO {
     private final List<PriceChartDO> priceCharts = new ArrayList<>();
 
     public FieldTypeDO addPriceChart(PriceChartDO priceChartDO){
-        priceCharts.add(priceChartDO);
+        getPriceCharts().add(priceChartDO);
         priceChartDO.setFieldTypeId(this.getId());
         return this;
     }

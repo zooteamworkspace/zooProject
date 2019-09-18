@@ -96,7 +96,7 @@ public class CourtDO {
     private final List<FieldTypeDO> fieldTypes = new ArrayList<>();
 
     public CourtDO addFieldType(FieldTypeDO fieldTypeDO){
-        fieldTypes.add(fieldTypeDO);
+        getFieldTypes().add(fieldTypeDO);
         fieldTypeDO.setCourtId(this.getId());
         return this;
     }

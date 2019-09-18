@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CourtClaimOTPRepository extends JpaRepository<CourtClaimOTPDO, Long> {
 	Optional<CourtClaimOTPDO> findByClaimKey(String claimKey);
+
+	void deleteByCourtId(Long id);
 }

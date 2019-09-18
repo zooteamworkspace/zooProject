@@ -147,7 +147,7 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 		if (court.isPresent()) {
 			CourtDO courtDO = court.get();
 			courtRepository.delete(courtDO);
-			courtClaimOTPRepository.deleteById(courtDO.getId());
+			courtClaimOTPRepository.deleteByCourtId(courtDO.getId());
 			courtUserRoleRepository.deleteByCourtId(courtDO.getId());
 			return courtDOToResponseConverter.convert(courtDO);
 		}

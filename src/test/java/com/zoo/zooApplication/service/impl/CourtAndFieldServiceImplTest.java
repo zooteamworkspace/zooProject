@@ -7,6 +7,8 @@ import com.zoo.zooApplication.dao.model.CourtClaimOTPDO;
 import com.zoo.zooApplication.dao.model.CourtDO;
 import com.zoo.zooApplication.dao.model.CourtUserRoleDO;
 import com.zoo.zooApplication.dao.model.FieldDO;
+import com.zoo.zooApplication.dao.model.FieldTypeDO;
+import com.zoo.zooApplication.dao.model.PriceChartDO;
 import com.zoo.zooApplication.dao.repository.CourtClaimOTPRepository;
 import com.zoo.zooApplication.dao.repository.CourtRepository;
 import com.zoo.zooApplication.dao.repository.CourtUserRoleRepository;
@@ -16,10 +18,15 @@ import com.zoo.zooApplication.dao.repository.PriceChartRepository;
 import com.zoo.zooApplication.request.ClaimKeyRequest;
 import com.zoo.zooApplication.request.CreateCourtRequest;
 import com.zoo.zooApplication.request.CreateFieldRequest;
+import com.zoo.zooApplication.request.CreateFieldTypeRequest;
 import com.zoo.zooApplication.request.FieldRequest;
+import com.zoo.zooApplication.request.FieldTypeRequest;
+import com.zoo.zooApplication.request.PriceChartRequest;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.CourtsResponse;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.response.FieldType;
+import com.zoo.zooApplication.response.PriceChart;
 import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import org.junit.Before;
 import org.junit.Test;
@@ -298,7 +305,7 @@ public class CourtAndFieldServiceImplTest {
 		when(courtDOToResponseConverter.convert(mockCourt)).thenReturn(court);
 		assertEquals(court, courtAndFieldService.deleteCourt("123"));
 		verify(courtRepository, times(1)).delete(mockCourt);
-		verify(courtClaimOTPRepository, times(1)).deleteById(Long.valueOf(123));
+		verify(courtClaimOTPRepository, times(1)).deleteByCourtId(Long.valueOf(123));
 		verify(courtUserRoleRepository, times(1)).deleteByCourtId(Long.valueOf(123));
 	}
 
@@ -375,14 +382,17 @@ public class CourtAndFieldServiceImplTest {
 	public void testAddFieldToCourt() {
 		CreateFieldRequest fieldRequest = new CreateFieldRequest();
 		FieldRequest request1 = new FieldRequest();
+		request1.setMainFieldType(MainFieldTypeEnum.SOCCER_5);
 		request1.setName("testName1");
 		request1.setFieldTypeId(123L);
 
 		FieldRequest request2 = new FieldRequest();
+		request2.setMainFieldType(MainFieldTypeEnum.SOCCER_7);
 		request2.setName("testName2");
 		request2.setFieldTypeId(123L);
 
 		FieldRequest request3 = new FieldRequest();
+		request3.setMainFieldType(MainFieldTypeEnum.SOCCER_11);
 		request3.setName("testName3");
 		request3.setFieldTypeId(456L);
 		request3.setSubFieldIds(Arrays.asList(123L, 456L));
@@ -402,6 +412,9 @@ public class CourtAndFieldServiceImplTest {
 		assertEquals("testName1", fieldValue.get(0).getName());
 		assertEquals("testName2", fieldValue.get(1).getName());
 		assertEquals("testName3", fieldValue.get(2).getName());
+		assertEquals(MainFieldTypeEnum.SOCCER_5, fieldValue.get(0).getMainFieldType());
+		assertEquals(MainFieldTypeEnum.SOCCER_7, fieldValue.get(1).getMainFieldType());
+		assertEquals(MainFieldTypeEnum.SOCCER_11, fieldValue.get(2).getMainFieldType());
 		assertEquals(Long.valueOf(456), fieldValue.get(2).getFieldTypeId());
 		assertEquals(Arrays.asList(123L, 456L), fieldValue.get(2).getSubFieldIds());
 	}
@@ -515,5 +528,207 @@ public class CourtAndFieldServiceImplTest {
 	}
 
 	/* FIELD MANAGEMENT TESTS END */
+
+	/* FIELD TYPE MANAGEMENT TEST START */
+	@Test
+	public void testAddFieldTypeToCourt() {
+		CreateFieldTypeRequest fieldTypeRequest = new CreateFieldTypeRequest();
+		FieldTypeRequest request1 = new FieldTypeRequest();
+		request1.setFieldTypeName("testName1");
+		List<PriceChartRequest> priceChartReq1 = new ArrayList<>();
+		request1.setPriceChartRequests(priceChartReq1);
+
+		FieldTypeRequest request2 = new FieldTypeRequest();
+		request2.setFieldTypeName("testName2");
+		List<PriceChartRequest> priceChartReq2 = new ArrayList<>();
+		PriceChartRequest priceChartReq = new PriceChartRequest();
+		priceChartReq.setTimeStart(1000);
+		priceChartReq.setTimeEnd(2000);
+		priceChartReq.setPriceAmount(2000.0);
+		priceChartReq2.add(priceChartReq);
+		request2.setPriceChartRequests(priceChartReq2);
+
+
+		fieldTypeRequest.setFieldTypeRequests(Arrays.asList(request1, request2));
+
+		CourtDO courtDO = spy(CourtDO.builder().build());
+		when(courtRepository.findById(123L)).thenReturn(Optional.of(courtDO));
+		when(courtRepository.save(courtDO)).thenReturn(courtDO);
+
+		Court response = mock(Court.class);
+		when(courtDOToResponseConverter.convert(courtDO)).thenReturn(response);
+		assertEquals(response, courtAndFieldService.addFieldTypeToCourt("123", fieldTypeRequest));
+		ArgumentCaptor<FieldTypeDO> fieldTypeCaptor = ArgumentCaptor.forClass(FieldTypeDO.class);
+		verify(courtDO, times(2)).addFieldType(fieldTypeCaptor.capture());
+		List<FieldTypeDO> fieldValue = fieldTypeCaptor.getAllValues();
+		assertEquals("testName1", fieldValue.get(0).getName());
+		assertEquals("testName2", fieldValue.get(1).getName());
+		assertEquals(0, fieldValue.get(0).getPriceCharts().size());
+		assertEquals(1, fieldValue.get(1).getPriceCharts().size());
+		assertEquals(Integer.valueOf(1000), fieldValue.get(1).getPriceCharts().get(0).getTimeStart());
+		assertEquals(Integer.valueOf(2000), fieldValue.get(1).getPriceCharts().get(0).getTimeEnd());
+		assertEquals(Double.valueOf(2000.0), fieldValue.get(1).getPriceCharts().get(0).getPriceAmount());
+		assertEquals("VND", fieldValue.get(1).getPriceCharts().get(0).getCurrencyId());
+	}
+
+	@Test
+	public void testEditFieldTypeCourtNotFound() {
+		when(courtRepository.findById(1L)).thenReturn(Optional.empty());
+		FieldTypeRequest fieldTypeRequest = new FieldTypeRequest();
+		assertNull(courtAndFieldService.editFieldType("1", "1", fieldTypeRequest));
+	}
+
+	@Test
+	public void testEditFieldTypeCourtFoundFieldTypeNotFound() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(mockCourt.findFieldTypeById(1L)).thenReturn(Optional.empty());
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldTypeRequest fieldTypeRequest = new FieldTypeRequest();
+		assertNull(courtAndFieldService.editFieldType("1", "1", fieldTypeRequest));
+	}
+
+	@Test
+	public void testEditFieldTypeName() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldTypeDO mockFieldType = mock(FieldTypeDO.class);
+		when(mockCourt.findFieldTypeById(1L)).thenReturn(Optional.of(mockFieldType));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldTypeRequest fieldTypeRequest = new FieldTypeRequest();
+		fieldTypeRequest.setFieldTypeName("testName");
+		FieldType expectFieldType = mock(FieldType.class);
+		when(fieldTypeRepository.save(mockFieldType)).thenReturn(mockFieldType);
+		when(fieldTypeDOToResponseConverter.convert(mockFieldType)).thenReturn(expectFieldType);
+		assertEquals(expectFieldType, courtAndFieldService.editFieldType("1", "1", fieldTypeRequest));
+		verify(mockFieldType, times(1)).setName("testName");
+		verifyNoMoreInteractions(mockFieldType);
+	}
+
+	@Test
+	public void testEditFieldTypePriceChartAdd() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldTypeDO mockFieldType = mock(FieldTypeDO.class);
+		List<PriceChartDO> priceChartDOList = new ArrayList<>();
+		PriceChartDO priceChartDO = mock(PriceChartDO.class);
+		priceChartDOList.add(priceChartDO);
+		when(mockFieldType.getPriceCharts()).thenReturn(priceChartDOList);
+		when(mockCourt.findFieldTypeById(1L)).thenReturn(Optional.of(mockFieldType));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldTypeRequest fieldTypeRequest = new FieldTypeRequest();
+		List<PriceChartRequest> priceChartList = new ArrayList<>();
+		PriceChartRequest priceChart1 = new PriceChartRequest();
+		priceChart1.setTimeStart(1);
+		priceChart1.setTimeEnd(2);
+		priceChartList.add(priceChart1);
+		PriceChartRequest priceChart2 = new PriceChartRequest();
+		priceChart2.setTimeStart(2);
+		priceChart2.setTimeEnd(4);
+		priceChartList.add(priceChart2);
+		fieldTypeRequest.setPriceChartRequests(priceChartList);
+		FieldType expectFieldType = mock(FieldType.class);
+
+		when(fieldTypeRepository.save(mockFieldType)).thenReturn(mockFieldType);
+		when(fieldTypeDOToResponseConverter.convert(mockFieldType)).thenReturn(expectFieldType);
+		assertEquals(expectFieldType, courtAndFieldService.editFieldType("1", "1", fieldTypeRequest));
+		verify(mockFieldType, times(1)).getPriceCharts();
+		verify(mockFieldType, times(1)).addPriceChart(any(PriceChartDO.class));
+		verifyNoMoreInteractions(mockFieldType);
+	}
+
+	@Test
+	public void testEditFieldTypePriceChartRemove() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldTypeDO mockFieldType = mock(FieldTypeDO.class);
+		List<PriceChartDO> priceChartDOList = new ArrayList<>();
+		priceChartDOList.add(mock(PriceChartDO.class));
+		priceChartDOList.add(mock(PriceChartDO.class));
+		when(mockFieldType.getPriceCharts()).thenReturn(priceChartDOList);
+		when(mockCourt.findFieldTypeById(1L)).thenReturn(Optional.of(mockFieldType));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldTypeRequest fieldTypeRequest = new FieldTypeRequest();
+		List<PriceChartRequest> priceChartList = new ArrayList<>();
+		PriceChartRequest priceChart1 = new PriceChartRequest();
+		priceChart1.setTimeStart(1);
+		priceChart1.setTimeEnd(2);
+		priceChartList.add(priceChart1);
+		fieldTypeRequest.setPriceChartRequests(priceChartList);
+		FieldType expectFieldType = mock(FieldType.class);
+
+		when(fieldTypeRepository.save(mockFieldType)).thenReturn(mockFieldType);
+		when(fieldTypeDOToResponseConverter.convert(mockFieldType)).thenReturn(expectFieldType);
+		assertEquals(expectFieldType, courtAndFieldService.editFieldType("1", "1", fieldTypeRequest));
+		verify(mockFieldType, times(1)).getPriceCharts();
+		verifyNoMoreInteractions(mockFieldType);
+		assertEquals(1, priceChartDOList.size());
+	}
+
+	@Test
+	public void testEditFieldTypePriceChartEdit() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldTypeDO mockFieldType = mock(FieldTypeDO.class);
+		List<PriceChartDO> priceChartDOList = new ArrayList<>();
+		PriceChartDO priceChartDO1 = mock(PriceChartDO.class);
+		priceChartDOList.add(priceChartDO1);
+		PriceChartDO priceChartDO2 = mock(PriceChartDO.class);
+		priceChartDOList.add(priceChartDO2);
+		when(mockFieldType.getPriceCharts()).thenReturn(priceChartDOList);
+		when(mockCourt.findFieldTypeById(1L)).thenReturn(Optional.of(mockFieldType));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		FieldTypeRequest fieldTypeRequest = new FieldTypeRequest();
+		List<PriceChartRequest> priceChartList = new ArrayList<>();
+		PriceChartRequest priceChart1 = new PriceChartRequest();
+		priceChart1.setTimeStart(1);
+		priceChart1.setTimeEnd(2);
+		priceChartList.add(priceChart1);
+		PriceChartRequest priceChart2 = new PriceChartRequest();
+		priceChart2.setTimeStart(2);
+		priceChart2.setTimeEnd(4);
+		priceChart2.setPriceAmount(2.0);
+		priceChartList.add(priceChart2);
+		fieldTypeRequest.setPriceChartRequests(priceChartList);
+		FieldType expectFieldType = mock(FieldType.class);
+
+		when(fieldTypeRepository.save(mockFieldType)).thenReturn(mockFieldType);
+		when(fieldTypeDOToResponseConverter.convert(mockFieldType)).thenReturn(expectFieldType);
+		assertEquals(expectFieldType, courtAndFieldService.editFieldType("1", "1", fieldTypeRequest));
+		verify(mockFieldType, times(1)).getPriceCharts();
+		verifyNoMoreInteractions(mockFieldType);
+		verify(priceChartDO1).setTimeStart(Integer.valueOf(1));
+		verify(priceChartDO1).setTimeEnd(Integer.valueOf(2));
+		verify(priceChartDO1).setCurrencyId("VND");
+		verify(priceChartDO2).setTimeStart(Integer.valueOf(2));
+		verify(priceChartDO2).setTimeEnd(Integer.valueOf(4));
+		verify(priceChartDO2).setPriceAmount(Double.valueOf(2.0));
+		verify(priceChartDO2).setCurrencyId("VND");
+	}
+
+	@Test
+	public void testDeleteFieldTypeCourtNotFound() {
+		when(courtRepository.findById(1L)).thenReturn(Optional.empty());
+		assertNull(courtAndFieldService.deleteFieldType("1", "1"));
+	}
+
+	@Test
+	public void testDeleteFieldTypeCourtFoundFieldNotFound() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		when(mockCourt.findFieldTypeById(1L)).thenReturn(Optional.empty());
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		assertNull(courtAndFieldService.deleteFieldType("1", "1"));
+	}
+
+	@Test
+	public void testDeleteFieldTypeNormal() {
+		CourtDO mockCourt = mock(CourtDO.class);
+		FieldTypeDO mockFieldType = mock(FieldTypeDO.class);
+		when(mockFieldType.getId()).thenReturn(Long.valueOf(1));
+		List<FieldTypeDO> fieldTypeList = new ArrayList<>(Arrays.asList(mockFieldType));
+		when(mockCourt.getFieldTypes()).thenReturn(fieldTypeList);
+		when(mockCourt.findFieldTypeById(1L)).thenReturn(Optional.of(mockFieldType));
+		when(courtRepository.findById(1L)).thenReturn(Optional.of(mockCourt));
+		assertNull(courtAndFieldService.deleteFieldType("1", "1"));
+		verify(courtRepository, times(1)).save(mockCourt);
+		assertTrue(fieldTypeList.isEmpty());
+	}
+
+	/* FIELD TYPE MANAGEMENT TEST END */
 
 }

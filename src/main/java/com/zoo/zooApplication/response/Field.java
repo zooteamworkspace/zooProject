@@ -2,6 +2,7 @@ package com.zoo.zooApplication.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -21,6 +22,9 @@ public class Field {
 
     @ApiModelProperty(value = "The field name if available", readOnly = true)
     private String name;
+
+    @ApiModelProperty(value = "The main field type (archetype) of this field", readOnly = true)
+    private MainFieldTypeEnum mainFieldType;
 
     @ApiModelProperty(value = "The field type this field belong to", readOnly = true)
     private Long fieldTypeId;

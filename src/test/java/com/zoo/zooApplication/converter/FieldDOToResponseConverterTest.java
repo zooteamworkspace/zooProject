@@ -2,6 +2,7 @@ package com.zoo.zooApplication.converter;
 
 import com.zoo.zooApplication.dao.model.FieldDO;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.type.MainFieldTypeEnum;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -40,6 +41,13 @@ public class FieldDOToResponseConverterTest {
         when(fieldDO.getName()).thenReturn("name");
         Field field = testConverter.convert(fieldDO);
         assertEquals("name", field.getName());
+    }
+
+    @Test
+    public void testConvertWithMainFieldType() {
+        when(fieldDO.getMainFieldType()).thenReturn(MainFieldTypeEnum.SOCCER_5);
+        Field field = testConverter.convert(fieldDO);
+        assertEquals(MainFieldTypeEnum.SOCCER_5, field.getMainFieldType());
     }
 
     @Test

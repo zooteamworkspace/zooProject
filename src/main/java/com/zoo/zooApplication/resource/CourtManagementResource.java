@@ -13,7 +13,9 @@ import com.zoo.zooApplication.response.ClaimKey;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.CourtsResponse;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.response.FieldResponse;
 import com.zoo.zooApplication.response.FieldType;
+import com.zoo.zooApplication.response.FieldTypeResponse;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -77,8 +79,8 @@ public class CourtManagementResource {
                 .build();
     }
 
-	@ApiOperation(value = "create a new court", response = Court.class)
-	@ApiResponses(value = {@ApiResponse(code = 200, message = "Court has been delete")})
+	@ApiOperation(value = "delete a court", response = Court.class)
+	@ApiResponses(value = {@ApiResponse(code = 200, message = "Court has been delete", response = Court.class)})
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
 	@ZooMasterAuthentication
@@ -91,7 +93,7 @@ public class CourtManagementResource {
 	}
 
     @ApiOperation(value = "Find claim key for a court if unclaimed", response = ClaimKey.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Found claim key")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Found claim key", response = ClaimKey.class)})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/claimKey")
@@ -104,7 +106,7 @@ public class CourtManagementResource {
     }
 
     @ApiOperation(value = "Find all court that current user has managing role on", response = CourtsResponse.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "All courts managed by user found")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "All courts managed by user found", response = CourtsResponse.class)})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/managedByUser")
@@ -117,7 +119,7 @@ public class CourtManagementResource {
     }
 
     @ApiOperation(value = "claim to be owner of the court", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court has been claimed")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court has been claimed", response = Court.class)})
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/claimAsOwner")
@@ -131,10 +133,14 @@ public class CourtManagementResource {
     }
 
     @ApiOperation(value = "edit the information of the court", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court edited")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court edited", response = Court.class)})
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public Court editCourt(@PathParam("courtId") String courtId, @RequestBody CreateCourtRequest createCourtRequest) {
         return courtAndFieldService.editCourt(courtId, createCourtRequest);
     }
@@ -144,72 +150,130 @@ public class CourtManagementResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/claimKeys/{claimKey}")
+    @ZooMasterAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Master", paramType = "header", dataTypeClass = String.class)
+    })
     public Court findByClaimKey(@PathParam("claimKey") String claimKey) {
         return courtAndFieldService.findCourtByClaimKey(claimKey);
     }
 
     @ApiOperation(value = "find the court and its fields by court id", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Court found and all the field belong to it", response = Court.class)})
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public Court findById(@PathParam("courtId") String courtId) {
         return courtAndFieldService.findCourtById(courtId);
     }
 
     @ApiOperation(value = "add a new field to the court", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the field to court")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the field to court", response = Court.class)})
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fields")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public Court addFieldToCourt(@PathParam("courtId") String courtId, @RequestBody CreateFieldRequest createFieldRequest) {
         return courtAndFieldService.addFieldToCourt(courtId, createFieldRequest);
     }
 
+    @ApiOperation(value = "get all the fields within the court", response = FieldResponse.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "found all fields belong to court", response = FieldResponse.class)})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/{courtId}/fields")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
+    public FieldResponse getAllFieldsInCourt(@PathParam("courtId") String courtId) {
+        return courtAndFieldService.getAllFieldsInCourt(courtId);
+    }
+
     @ApiOperation(value = "edit field information of a field from court", response = Field.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field", response = Field.class)})
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fields/{fieldId}")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public Field editField(@PathParam("courtId") String courtId, @PathParam("fieldId") String fieldId, @RequestBody FieldRequest fieldRequest) {
         return courtAndFieldService.editField(courtId, fieldId, fieldRequest);
     }
 
     @ApiOperation(value = "delete a field from court", response = Field.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field", response = Field.class)})
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fields/{fieldId}")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public Field deleteField(@PathParam("courtId") String courtId, @PathParam("fieldId") String fieldId) {
         return courtAndFieldService.deleteField(courtId, fieldId);
     }
 
     @ApiOperation(value = "add a new field type price to the court", response = Court.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the field price type to court")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully added the field price type to court", response = Court.class)})
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fieldTypes")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public Court addFieldTypeToCourt(@PathParam("courtId") String courtId,
                                      CreateFieldTypeRequest createFieldTypeRequest){
         return courtAndFieldService.addFieldTypeToCourt(courtId, createFieldTypeRequest);
     }
 
+    @ApiOperation(value = "get all the field types within the court", response = FieldTypeResponse.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Found all field types belong to court", response = FieldTypeResponse.class)})
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/courts/{courtId}/fieldTypes")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
+    public FieldTypeResponse getAllFieldTypesInCourt(@PathParam("courtId") String courtId){
+        return courtAndFieldService.getAllFieldTypesInCourt(courtId);
+    }
+
     @ApiOperation(value = "edit field type information of the court", response = FieldType.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edit the field type")})
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edit the field type", response = FieldType.class)})
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fieldTypes/{fieldTypeId}")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public FieldType editFieldType(@PathParam("courtId") String courtId,
                                          @PathParam("fieldTypeId") String fieldTypeId,
                                          FieldTypeRequest fieldTypeRequest){
         return courtAndFieldService.editFieldType(courtId, fieldTypeId, fieldTypeRequest);
     }
 
-    @ApiOperation(value = "delete a field from court", response = Field.class)
-    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field")})
+    @ApiOperation(value = "delete a field from court", response = FieldType.class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully edited the field", response = FieldType.class)})
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/courts/{courtId}/fieldTypes/{fieldTypeId}")
+    @FirebaseAuthentication
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "X-Authorization-Firebase", paramType = "header", dataTypeClass = String.class)
+    })
     public FieldType deleteFieldType(@PathParam("courtId") String courtId, @PathParam("fieldTypeId") String fieldTypeId) {
         return courtAndFieldService.deleteFieldType(courtId, fieldTypeId);
     }

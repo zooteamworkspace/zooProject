@@ -31,7 +31,8 @@ public class FieldTypeDOToResponseConverterTest {
 
     @Test(expected = NullPointerException.class)
     public void testConvertWithNull() {
-        testConverter.convert(null);
+        testConverter.convert((FieldTypeDO) null);
+        testConverter.convert((List<FieldTypeDO>) null);
     }
 
     @Test

@@ -25,7 +25,9 @@ import com.zoo.zooApplication.response.ClaimKey;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.CourtsResponse;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.response.FieldResponse;
 import com.zoo.zooApplication.response.FieldType;
+import com.zoo.zooApplication.response.FieldTypeResponse;
 import com.zoo.zooApplication.service.CourtAndFieldService;
 import com.zoo.zooApplication.type.CourtRoleEnum;
 import org.apache.commons.collections4.CollectionUtils;
@@ -262,6 +264,13 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 		return courtDO;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public FieldResponse getAllFieldsInCourt(String courtId) {
+		List<FieldDO> fieldDOList = fieldRepository.findAllByCourtId(NumberUtils.toLong(courtId));
+		return fieldDOToResponseConverter.convert(fieldDOList);
+	}
+
 	@Transactional
 	@Override
 	public Field editField(String courtId, String fieldId, FieldRequest fieldRequest) {
@@ -366,6 +375,13 @@ public class CourtAndFieldServiceImpl implements CourtAndFieldService {
 			.priceAmount(priceChartRequest.getPriceAmount())
 			.currencyId("VND")
 			.build();
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public FieldTypeResponse getAllFieldTypesInCourt(String courtId) {
+		List<FieldTypeDO> fieldTypeDOList = fieldTypeRepository.findAllByCourtId(NumberUtils.toLong(courtId));
+		return fieldTypeDOToResponseConverter.convert(fieldTypeDOList);
 	}
 
 	@Transactional

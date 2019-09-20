@@ -11,7 +11,9 @@ import com.zoo.zooApplication.response.ClaimKey;
 import com.zoo.zooApplication.response.Court;
 import com.zoo.zooApplication.response.CourtsResponse;
 import com.zoo.zooApplication.response.Field;
+import com.zoo.zooApplication.response.FieldResponse;
 import com.zoo.zooApplication.response.FieldType;
+import com.zoo.zooApplication.response.FieldTypeResponse;
 
 public interface CourtAndFieldService {
 	Court createCourt(CreateCourtRequest createCourtRequest);
@@ -32,11 +34,15 @@ public interface CourtAndFieldService {
 
 	Court addFieldToCourt(String courtId, CreateFieldRequest createFieldRequest);
 
+	FieldResponse getAllFieldsInCourt(String courtId);
+
 	Field editField(String courtId, String fieldId, FieldRequest fieldRequest);
 
 	Field deleteField(String courtId, String fieldId);
 
 	Court addFieldTypeToCourt(String courtId, CreateFieldTypeRequest createFieldTypeRequest);
+
+	FieldTypeResponse getAllFieldTypesInCourt(String courtId);
 
 	FieldType editFieldType(String courtId, String fieldTypeId, FieldTypeRequest fieldTypeRequest);
 
